@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Logo from '@/components/Logo';
 import ScreenTimeCard from '@/components/ScreenTimeCard';
@@ -6,6 +5,7 @@ import WeeklyScreenTimeChart from '@/components/WeeklyScreenTimeChart';
 import BrightnessControl from '@/components/BrightnessControl';
 import BreakControls from '@/components/BreakControls';
 import EyeHealthTips from '@/components/EyeHealthTips';
+import EyeHealthStats from '@/components/EyeHealthStats';
 import { Button } from '@/components/ui/button';
 import { useEyeCare } from '@/contexts/EyeCareContext';
 import { Timer } from 'lucide-react';
@@ -64,12 +64,17 @@ const Index = () => {
             <WeeklyScreenTimeChart />
           </div>
           <div className="transition-all duration-300 hover:scale-[1.02]">
-            <BreakControls />
+            <EyeHealthStats />
           </div>
         </div>
 
-        <div className="transition-all duration-300 hover:scale-[1.02]">
-          <EyeHealthTips />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="transition-all duration-300 hover:scale-[1.02]">
+            <BreakControls />
+          </div>
+          <div className="transition-all duration-300 hover:scale-[1.02]">
+            <EyeHealthTips />
+          </div>
         </div>
       </main>
 
