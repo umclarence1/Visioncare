@@ -13,7 +13,6 @@ import EyeExercises from '@/components/EyeExercises';
 import DailyHealthLog from '@/components/DailyHealthLog';
 import EyeCheckupScheduler from '@/components/EyeCheckupScheduler';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useEyeCare } from '@/contexts/EyeCareContext';
 import { 
   Home, 
@@ -22,25 +21,26 @@ import {
   Settings, 
   BookOpen,
   Calendar,
-  Heart
+  Heart,
+  Sparkles,
+  Eye
 } from 'lucide-react';
 
 const Index = () => {
   const { onboardingCompleted, setOnboardingComplete } = useEyeCare();
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [showSettings, setShowSettings] = useState(false);
 
   if (!onboardingCompleted) {
     return <OnboardingWizard onComplete={setOnboardingComplete} />;
   }
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'monitoring', label: 'Monitoring', icon: BarChart3 },
-    { id: 'exercises', label: 'Exercises', icon: Activity },
-    { id: 'health', label: 'Health Log', icon: Heart },
-    { id: 'education', label: 'Learn', icon: BookOpen },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'dashboard', label: 'Dashboard', icon: Home, gradient: 'from-blue-500 to-blue-600' },
+    { id: 'monitoring', label: 'Analytics', icon: BarChart3, gradient: 'from-purple-500 to-purple-600' },
+    { id: 'exercises', label: 'Exercises', icon: Activity, gradient: 'from-emerald-500 to-emerald-600' },
+    { id: 'health', label: 'Health Log', icon: Heart, gradient: 'from-red-500 to-pink-600' },
+    { id: 'education', label: 'Learn', icon: BookOpen, gradient: 'from-amber-500 to-orange-600' },
+    { id: 'settings', label: 'Settings', icon: Settings, gradient: 'from-gray-500 to-gray-600' }
   ];
 
   const renderContent = () => {
@@ -50,18 +50,26 @@ const Index = () => {
       
       case 'monitoring':
         return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold">Screen Time & Analytics</h1>
-              <p className="text-muted-foreground">Monitor your digital wellness</p>
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container animate-float">
+                  <BarChart3 className="h-6 w-6 text-purple-600" />
+                </div>
+                <h1 className="text-4xl font-bold text-gradient">Screen Time & Analytics</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Sparkles className="h-6 w-6 text-yellow-500" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Monitor your digital wellness with precision</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <ScreenTimeCard />
               <BrightnessControl />
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <WeeklyScreenTimeChart />
               <EyeHealthStats />
             </div>
@@ -72,10 +80,18 @@ const Index = () => {
       
       case 'exercises':
         return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold">Eye Exercises</h1>
-              <p className="text-muted-foreground">Strengthen and relax your eyes</p>
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container-success animate-float">
+                  <Activity className="h-6 w-6 text-emerald-600" />
+                </div>
+                <h1 className="text-4xl font-bold text-gradient-emerald">Eye Exercises</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Eye className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Strengthen and relax your eyes with guided exercises</p>
             </div>
             <EyeExercises />
           </div>
@@ -83,13 +99,21 @@ const Index = () => {
       
       case 'health':
         return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold">Health Tracking</h1>
-              <p className="text-muted-foreground">Monitor symptoms and schedule checkups</p>
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container-warning animate-float">
+                  <Heart className="h-6 w-6 text-red-600" />
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-pink-600 to-red-600 bg-clip-text text-transparent">Health Tracking</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Calendar className="h-6 w-6 text-purple-600" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Monitor symptoms and schedule checkups</p>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <DailyHealthLog />
               <EyeCheckupScheduler />
             </div>
@@ -98,10 +122,18 @@ const Index = () => {
       
       case 'education':
         return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold">Eye Health Education</h1>
-              <p className="text-muted-foreground">Learn tips and best practices</p>
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container-warning animate-float">
+                  <BookOpen className="h-6 w-6 text-amber-600" />
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 bg-clip-text text-transparent">Eye Health Education</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Sparkles className="h-6 w-6 text-yellow-500" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Learn tips and best practices for optimal eye health</p>
             </div>
             <EyeHealthTips />
           </div>
@@ -109,13 +141,21 @@ const Index = () => {
       
       case 'settings':
         return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold">Settings & Preferences</h1>
-              <p className="text-muted-foreground">Customize your VisionCare experience</p>
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container animate-float">
+                  <Settings className="h-6 w-6 text-gray-600" />
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-600 via-gray-700 to-gray-600 bg-clip-text text-transparent">Settings & Preferences</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Sparkles className="h-6 w-6 text-yellow-500" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Customize your VisionCare experience</p>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <BrightnessControl />
               <BreakControls />
             </div>
@@ -128,31 +168,48 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-all duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-950/20 transition-all duration-700">
       <NavigationHeader 
         onOpenSettings={() => setActiveTab('settings')}
       />
 
       <div className="flex min-h-[calc(100vh-80px)]">
         {/* Sidebar Navigation */}
-        <div className="hidden md:flex w-64 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-r border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col w-full p-4">
-            <nav className="space-y-2">
+        <div className="hidden md:flex w-80 backdrop-professional border-r border-white/10 dark:border-white/5">
+          <div className="flex flex-col w-full p-6">
+            <nav className="space-y-3">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = activeTab === item.id;
                 return (
                   <Button
                     key={item.id}
-                    variant={activeTab === item.id ? "default" : "ghost"}
-                    className={`w-full justify-start transition-all duration-200 ${
-                      activeTab === item.id 
-                        ? 'bg-primary text-primary-foreground shadow-md' 
-                        : 'hover:bg-accent'
+                    variant="ghost"
+                    className={`w-full justify-start text-left p-4 h-auto transition-all duration-300 group ${
+                      isActive 
+                        ? `bg-gradient-to-r ${item.gradient} text-white shadow-lg shadow-blue-500/25 scale-105` 
+                        : 'hover:bg-white/10 dark:hover:bg-white/5 hover:scale-102'
                     }`}
                     onClick={() => setActiveTab(item.id)}
                   >
-                    <Icon className="mr-3 h-4 w-4" />
-                    {item.label}
+                    <div className={`p-2 rounded-xl mr-4 transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-white/20' 
+                        : 'bg-white/10 dark:bg-white/5 group-hover:bg-white/20'
+                    }`}>
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <span className="font-semibold text-lg">{item.label}</span>
+                      <span className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
+                        {item.id === 'dashboard' && 'Overview & insights'}
+                        {item.id === 'monitoring' && 'Track screen time'}
+                        {item.id === 'exercises' && 'Eye workouts'}
+                        {item.id === 'health' && 'Symptom logging'}
+                        {item.id === 'education' && 'Tips & guides'}
+                        {item.id === 'settings' && 'Customize app'}
+                      </span>
+                    </div>
                   </Button>
                 );
               })}
@@ -161,22 +218,25 @@ const Index = () => {
         </div>
 
         {/* Mobile Bottom Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border-t border-gray-200 dark:border-gray-700 z-50">
-          <div className="flex justify-around p-2">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 backdrop-professional border-t border-white/10 dark:border-white/5 z-50">
+          <div className="flex justify-around p-3">
             {navigationItems.slice(0, 5).map((item) => {
               const Icon = item.icon;
+              const isActive = activeTab === item.id;
               return (
                 <Button
                   key={item.id}
                   variant="ghost"
                   size="sm"
-                  className={`flex flex-col items-center space-y-1 h-auto py-2 px-3 ${
-                    activeTab === item.id ? 'text-primary' : 'text-muted-foreground'
+                  className={`flex flex-col items-center space-y-1 h-auto py-3 px-4 transition-all duration-300 ${
+                    isActive 
+                      ? `bg-gradient-to-b ${item.gradient} text-white shadow-lg rounded-2xl scale-110` 
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                   }`}
                   onClick={() => setActiveTab(item.id)}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span className="text-xs">{item.label}</span>
+                  <Icon className="h-5 w-5" />
+                  <span className="text-xs font-medium">{item.label}</span>
                 </Button>
               );
             })}
@@ -184,17 +244,32 @@ const Index = () => {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 pb-20 md:pb-6 animate-fade-in">
+        <main className="flex-1 p-8 pb-24 md:pb-8 overflow-auto">
           {renderContent()}
         </main>
       </div>
 
       {/* Footer */}
-      <footer className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-700 mt-12 hidden md:block">
-        <div className="container mx-auto py-6 px-4">
-          <div className="text-center space-y-2">
-            <p className="text-primary font-semibold text-lg">VisionCare - Your Comprehensive Eye Wellness Assistant</p>
-            <p className="text-sm text-muted-foreground">"See Clearly. Live Comfortably. Track Progress."</p>
+      <footer className="backdrop-professional border-t border-white/10 dark:border-white/5 mt-16 hidden md:block">
+        <div className="container mx-auto py-8 px-8">
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="icon-container animate-float">
+                <Eye className="h-6 w-6 text-blue-600" />
+              </div>
+              <p className="text-2xl font-bold text-gradient">VisionCare - Your Comprehensive Eye Wellness Assistant</p>
+              <div className="icon-container animate-float delay-300">
+                <Sparkles className="h-6 w-6 text-yellow-500" />
+              </div>
+            </div>
+            <p className="text-lg text-gray-600 dark:text-gray-400 font-medium italic">
+              "See Clearly. Live Comfortably. Track Progress."
+            </p>
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-200"></div>
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-400"></div>
+            </div>
           </div>
         </div>
       </footer>

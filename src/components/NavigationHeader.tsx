@@ -10,7 +10,9 @@ import {
   Menu, 
   Settings, 
   Activity,
-  AlertCircle 
+  AlertCircle,
+  Shield,
+  Zap
 } from 'lucide-react';
 
 interface NavigationHeaderProps {
@@ -43,66 +45,76 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
   );
 
   return (
-    <header className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="container mx-auto py-3 px-4">
+    <header className="sticky top-0 z-50 backdrop-professional border-b border-white/10 dark:border-white/5">
+      <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4">
+          {/* Left Section */}
+          <div className="flex items-center space-x-6">
             <Button
               variant="ghost"
               size="sm"
               onClick={onToggleSidebar}
-              className="md:hidden"
+              className="md:hidden p-2 hover:bg-white/10 dark:hover:bg-white/5 rounded-xl transition-all duration-300"
             >
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5" />
             </Button>
             <Logo />
           </div>
 
-          {/* Status Indicators */}
-          <div className="hidden md:flex items-center space-x-3">
+          {/* Center Status Indicators */}
+          <div className="hidden lg:flex items-center space-x-4">
             {isExercising && (
-              <div className="flex items-center space-x-1 px-2 py-1 bg-green-100 dark:bg-green-900/20 rounded-full">
-                <Activity className="h-3 w-3 text-green-600 animate-pulse" />
-                <span className="text-xs font-medium text-green-700 dark:text-green-300">
-                  Exercise Active
-                </span>
+              <div className="status-indicator status-active animate-fade-in">
+                <Activity className="h-4 w-4 mr-2 animate-pulse" />
+                <span className="font-medium">Exercise Active</span>
               </div>
             )}
 
             {hasAlerts && (
-              <div className="flex items-center space-x-1 px-2 py-1 bg-red-100 dark:bg-red-900/20 rounded-full">
-                <AlertCircle className="h-3 w-3 text-red-600" />
-                <span className="text-xs font-medium text-red-700 dark:text-red-300">
-                  Attention Needed
-                </span>
+              <div className="status-indicator status-warning animate-fade-in">
+                <AlertCircle className="h-4 w-4 mr-2" />
+                <span className="font-medium">Attention Needed</span>
               </div>
             )}
 
-            <Badge variant="outline" className="text-xs">
-              {Math.floor(screenTime.daily / 60)}h {Math.floor(screenTime.daily % 60)}m today
-            </Badge>
+            <div className="flex items-center gap-3 px-4 py-2 pro-card rounded-2xl">
+              <div className="icon-container">
+                <Shield className="h-4 w-4 text-blue-600" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Today's Screen Time</span>
+                <span className="text-sm font-bold text-gradient">
+                  {Math.floor(screenTime.daily / 60)}h {Math.floor(screenTime.daily % 60)}m
+                </span>
+              </div>
+            </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-2">
+          {/* Right Action Buttons */}
+          <div className="flex items-center space-x-3">
             <Button 
               variant="ghost"
               onClick={handleEnableNotifications}
               size="sm"
-              className="hidden sm:flex"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/5 transition-all duration-300"
             >
-              <Bell className="mr-1 h-4 w-4" />
-              Alerts
+              <div className="icon-container-warning">
+                <Bell className="h-4 w-4 text-amber-600" />
+              </div>
+              <span className="font-medium">Alerts</span>
             </Button>
 
             <Button 
               variant={isTracking ? "destructive" : "default"}
               onClick={isTracking ? stopTracking : startTracking}
               size="sm"
-              className="transition-all duration-300"
+              className={`btn-innovative ${isTracking ? 'from-red-500 to-red-600' : ''} shadow-lg`}
             >
-              <Timer className="mr-1 h-4 w-4" />
-              <span className="hidden sm:inline">
+              <Timer className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline font-semibold">
+                {isTracking ? "Pause Tracking" : "Resume Tracking"}
+              </span>
+              <span className="sm:hidden">
                 {isTracking ? "Pause" : "Resume"}
               </span>
             </Button>
@@ -111,17 +123,19 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
               variant="outline" 
               onClick={resetDailyStats}
               size="sm"
-              className="hidden sm:flex transition-all duration-300"
+              className="hidden sm:flex items-center gap-2 pro-card border-none hover:shadow-lg transition-all duration-300"
             >
-              Reset
+              <Zap className="h-4 w-4" />
+              <span className="font-medium">Reset</span>
             </Button>
 
             <Button
               variant="ghost"
               onClick={onOpenSettings}
               size="sm"
+              className="p-3 rounded-xl hover:bg-white/10 dark:hover:bg-white/5 transition-all duration-300"
             >
-              <Settings className="h-4 w-4" />
+              <Settings className="h-5 w-5" />
             </Button>
           </div>
         </div>
