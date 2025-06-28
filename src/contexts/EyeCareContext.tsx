@@ -41,7 +41,10 @@ interface EyeCareContextType {
   nextCheckupDate: string | null;
   onboardingCompleted: boolean;
   userPreferences: any;
+  exerciseHistory: EyeExercise[];
+  healthScore: number;
   updateBreakSettings: (settings: Partial<BreakSetting>) => void;
+  setBreakSettings: (settings: Partial<BreakSetting>) => void;
   updateBrightness: (level: number) => void;
   startTracking: () => void;
   stopTracking: () => void;
@@ -49,9 +52,12 @@ interface EyeCareContextType {
   endBreak: () => void;
   resetDailyStats: () => void;
   addHealthLog: (log: Omit<HealthLogEntry, 'id'>) => void;
+  logHealthData: (symptom: string, severity: number, notes: string) => void;
   startExercise: (exercise: EyeExercise) => void;
+  startEyeExercise: (exercise: { name: string; duration: number; instructions: string }) => void;
   endExercise: () => void;
   setNextCheckup: (date: string) => void;
+  getNextBreakTime: () => number;
   requestNotificationPermission: () => Promise<boolean>;
   setOnboardingComplete: (preferences: any) => void;
 }
@@ -126,6 +132,7 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean>(false);
   const [userPreferences, setUserPreferences] = useState<any>(null);
+  const [exerciseHistory, setExerciseHistory] = useState<EyeExercise[]>([]);
 
   useEffect(() => {
     const savedScreenTime = localStorage.getItem('screenTime');
@@ -133,12 +140,16 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
     const savedBrightness = localStorage.getItem('brightness');
     const savedHealthLogs = localStorage.getItem('healthLogs');
     const savedCheckupDate = localStorage.getItem('nextCheckupDate');
+    const savedOnboarding = localStorage.getItem('onboardingCompleted');
+    const savedPreferences = localStorage.getItem('userPreferences');
 
     if (savedScreenTime) setScreenTime(JSON.parse(savedScreenTime));
     if (savedBreakSettings) setBreakSettings(JSON.parse(savedBreakSettings));
     if (savedBrightness) setBrightness(Number(savedBrightness));
     if (savedHealthLogs) setHealthLogs(JSON.parse(savedHealthLogs));
     if (savedCheckupDate) setNextCheckupDate(savedCheckupDate);
+    if (savedOnboarding === 'true') setOnboardingCompleted(true);
+    if (savedPreferences) setUserPreferences(JSON.parse(savedPreferences));
   }, []);
 
   useEffect(() => {
@@ -230,6 +241,10 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
 
   const updateBreakSettings = (settings: Partial<BreakSetting>) => {
     setBreakSettings(prev => ({ ...prev, ...settings }));
+  };
+
+  const setBreakSettingsAlias = (settings: Partial<BreakSetting>) => {
+    updateBreakSettings(settings);
   };
 
   const updateBrightness = (level: number) => {
@@ -334,9 +349,27 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const logHealthData = (symptom: string, severity: number, notes: string) => {
+    const newLog: HealthLogEntry = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      symptoms: [symptom],
+      severity,
+      notes,
+      screenTimeHours: screenTime.daily / 60
+    };
+    setHealthLogs(prev => [newLog, ...prev].slice(0, 30));
+    
+    toast({
+      title: "Health Data Logged",
+      description: `Recorded ${symptom} with severity ${severity}`,
+    });
+  };
+
   const startExercise = (exercise: EyeExercise) => {
     setCurrentExercise(exercise);
     setIsExercising(true);
+    setExerciseHistory(prev => [exercise, ...prev].slice(0, 50));
     
     toast({
       title: `Starting: ${exercise.name}`,
@@ -349,6 +382,17 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
     }, exercise.duration * 1000);
   };
 
+  const startEyeExercise = (exercise: { name: string; duration: number; instructions: string }) => {
+    const eyeExercise: EyeExercise = {
+      id: Date.now().toString(),
+      name: exercise.name,
+      description: exercise.instructions,
+      duration: exercise.duration,
+      instructions: [exercise.instructions]
+    };
+    startExercise(eyeExercise);
+  };
+
   const endExercise = () => {
     setIsExercising(false);
     setCurrentExercise(null);
@@ -358,6 +402,25 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
       description: "Great job taking care of your eyes!",
     });
   };
+
+  const getNextBreakTime = (): number => {
+    if (!isTracking) return breakSettings.interval;
+    const timeInCurrentInterval = screenTime.daily % breakSettings.interval;
+    return Math.max(0, breakSettings.interval - timeInCurrentInterval);
+  };
+
+  const calculateHealthScore = (): number => {
+    if (healthLogs.length === 0) return 85; // Default good score
+    
+    const recentLogs = healthLogs.slice(0, 7); // Last 7 entries
+    const avgSeverity = recentLogs.reduce((sum, log) => sum + log.severity, 0) / recentLogs.length;
+    const screenTimeScore = screenTime.daily < 300 ? 25 : screenTime.daily < 480 ? 15 : 5;
+    const exerciseScore = exerciseHistory.length > 0 ? 20 : 0;
+    
+    return Math.max(0, Math.min(100, 100 - (avgSeverity * 10) + screenTimeScore + exerciseScore));
+  };
+
+  const healthScore = calculateHealthScore();
 
   const setNextCheckup = (date: string) => {
     setNextCheckupDate(date);
@@ -385,40 +448,6 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  // Initialize from localStorage
-  useEffect(() => {
-    const savedOnboarding = localStorage.getItem('onboardingCompleted');
-    const savedPreferences = localStorage.getItem('userPreferences');
-    
-    if (savedOnboarding === 'true') {
-      setOnboardingCompleted(true);
-    }
-    
-    if (savedPreferences) {
-      setUserPreferences(JSON.parse(savedPreferences));
-    }
-
-    const savedScreenTime = localStorage.getItem('screenTime');
-    const savedBreakSettings = localStorage.getItem('breakSettings');
-    const savedBrightness = localStorage.getItem('brightness');
-    const savedHealthLogs = localStorage.getItem('healthLogs');
-    const savedCheckupDate = localStorage.getItem('nextCheckupDate');
-
-    if (savedScreenTime) setScreenTime(JSON.parse(savedScreenTime));
-    if (savedBreakSettings) setBreakSettings(JSON.parse(savedBreakSettings));
-    if (savedBrightness) setBrightness(Number(savedBrightness));
-    if (savedHealthLogs) setHealthLogs(JSON.parse(savedHealthLogs));
-    if (savedCheckupDate) setNextCheckupDate(savedCheckupDate);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('screenTime', JSON.stringify(screenTime));
-    localStorage.setItem('breakSettings', JSON.stringify(breakSettings));
-    localStorage.setItem('brightness', brightness.toString());
-    localStorage.setItem('healthLogs', JSON.stringify(healthLogs));
-    if (nextCheckupDate) localStorage.setItem('nextCheckupDate', nextCheckupDate);
-  }, [screenTime, breakSettings, brightness, healthLogs, nextCheckupDate]);
-
   useEffect(() => {
     startTracking();
     requestNotificationPermission();
@@ -442,7 +471,10 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
       nextCheckupDate,
       onboardingCompleted,
       userPreferences,
+      exerciseHistory,
+      healthScore,
       updateBreakSettings,
+      setBreakSettings: setBreakSettingsAlias,
       updateBrightness,
       startTracking,
       stopTracking,
@@ -450,9 +482,12 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
       endBreak,
       resetDailyStats,
       addHealthLog,
+      logHealthData,
       startExercise,
+      startEyeExercise,
       endExercise,
       setNextCheckup,
+      getNextBreakTime,
       requestNotificationPermission,
       setOnboardingComplete
     }}>

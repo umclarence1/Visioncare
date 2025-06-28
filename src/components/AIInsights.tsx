@@ -69,7 +69,9 @@ const AIInsights: React.FC = () => {
 
     if (recentLogs.length > 0) {
       const commonSymptoms = recentLogs.reduce((acc, log) => {
-        acc[log.symptom] = (acc[log.symptom] || 0) + 1;
+        log.symptoms.forEach(symptom => {
+          acc[symptom] = (acc[symptom] || 0) + 1;
+        });
         return acc;
       }, {} as Record<string, number>);
 
@@ -119,7 +121,7 @@ const AIInsights: React.FC = () => {
     }
 
     // Personalized exercise recommendations
-    if (recentLogs.some(log => log.symptom.includes('dry'))) {
+    if (recentLogs.some(log => log.symptoms.some(symptom => symptom.includes('dry')))) {
       newRecommendations.push({
         id: 'dry-eyes',
         type: 'exercise',
