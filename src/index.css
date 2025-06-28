@@ -101,7 +101,7 @@
 }
 
 @layer components {
-  /* Glass Morphism Cards */
+  /* Advanced Glass Morphism Cards */
   .glass-card {
     @apply bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl;
   }
@@ -110,9 +110,24 @@
     @apply bg-white/20 dark:bg-white/10 backdrop-blur-2xl border border-white/30 dark:border-white/20 shadow-2xl;
   }
   
+  /* Innovative Neuomorphic Cards */
+  .neuro-card {
+    @apply bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-black 
+           shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] 
+           dark:shadow-[8px_8px_16px_#0f0f0f,-8px_-8px_16px_#2a2a2a] 
+           border border-gray-200/50 dark:border-gray-700/50;
+  }
+  
+  .neuro-card-inset {
+    @apply bg-gradient-to-br from-gray-100 via-gray-50 to-white dark:from-black dark:via-gray-900 dark:to-gray-800
+           shadow-[inset_8px_8px_16px_#d1d9e6,inset_-8px_-8px_16px_#ffffff] 
+           dark:shadow-[inset_8px_8px_16px_#0f0f0f,inset_-8px_-8px_16px_#2a2a2a];
+  }
+  
   /* Professional Gradient Cards */
   .pro-card {
-    @apply bg-gradient-to-br from-white via-white to-azure-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/30 border border-gray-200/60 dark:border-gray-700/60 shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10;
+    @apply bg-gradient-to-br from-white via-white to-azure-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/30 
+           border border-gray-200/60 dark:border-gray-700/60 shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10;
   }
   
   .pro-card-hover {
@@ -121,7 +136,9 @@
   
   /* Innovative Buttons */
   .btn-innovative {
-    @apply relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-size-200 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:bg-pos-100 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105;
+    @apply relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-size-200 
+           text-white font-semibold py-3 px-8 rounded-2xl shadow-lg 
+           transition-all duration-300 hover:bg-pos-100 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105;
   }
   
   .btn-innovative::before {
@@ -131,6 +148,35 @@
   
   .btn-innovative:hover::before {
     @apply translate-x-full;
+  }
+  
+  /* Voice Assistant Button */
+  .btn-voice {
+    @apply relative bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full p-4 
+           shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/50 
+           hover:scale-110 active:scale-95;
+  }
+  
+  .btn-voice.recording {
+    @apply animate-pulse bg-gradient-to-r from-red-500 to-pink-500 shadow-red-500/50;
+  }
+  
+  /* AI Insights Panel */
+  .ai-insights {
+    @apply bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-purple-950/20 dark:via-gray-900 dark:to-blue-950/20
+           border border-purple-200/50 dark:border-purple-700/50 rounded-3xl p-6 shadow-xl shadow-purple-500/10;
+  }
+  
+  /* Gamification Elements */
+  .achievement-badge {
+    @apply inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 
+           text-white font-bold py-2 px-4 rounded-full shadow-lg shadow-yellow-500/30 
+           transform hover:scale-105 transition-all duration-300;
+  }
+  
+  .streak-counter {
+    @apply bg-gradient-to-r from-emerald-400 to-cyan-400 text-white font-bold text-2xl 
+           rounded-full w-16 h-16 flex items-center justify-center shadow-lg shadow-emerald-500/30;
   }
   
   /* Status Indicators */
@@ -144,7 +190,7 @@
   
   .status-active::before {
     content: '';
-    @apply absolute left-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse;
+    @apply absolute left-2 w-2 h-2 bg-emerald-500 rounded-full;
   }
   
   .status-warning {
@@ -155,45 +201,14 @@
     @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
   }
   
-  /* Floating Elements */
-  .floating-card {
-    @apply pro-card pro-card-hover animate-float;
-  }
-  
-  /* Mesh Gradient Background */
-  .mesh-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-    background-size: 400% 400%;
-    animation: meshMove 20s ease infinite;
-  }
-  
-  @keyframes meshMove {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  
-  /* Professional Navigation */
-  .nav-item {
-    @apply relative px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10 dark:hover:bg-white/5;
-  }
-  
-  .nav-item.active {
-    @apply bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-600 dark:text-blue-400;
-  }
-  
-  .nav-item.active::after {
-    content: '';
-    @apply absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full;
-  }
-  
-  /* Innovative Progress Bars */
+  /* Advanced Progress Bars */
   .progress-innovative {
-    @apply h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative;
+    @apply h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative;
   }
   
   .progress-innovative::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-size-200 animate-shimmer;
+    @apply absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-size-200;
   }
   
   /* Backdrop Effects */
@@ -210,6 +225,10 @@
     @apply bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 bg-clip-text text-transparent;
   }
   
+  .text-gradient-ai {
+    @apply bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent;
+  }
+  
   /* Icon Containers */
   .icon-container {
     @apply p-3 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-200/50 dark:border-blue-700/50;
@@ -223,6 +242,19 @@
     @apply p-3 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-200/50 dark:border-amber-700/50;
   }
   
+  .icon-container-ai {
+    @apply p-3 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-200/50 dark:border-purple-700/50;
+  }
+  
+  /* Health Score Ring */
+  .health-ring {
+    @apply relative w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-1;
+  }
+  
+  .health-ring-inner {
+    @apply w-full h-full rounded-full bg-white dark:bg-gray-900 flex items-center justify-center;
+  }
+  
   /* Utility Classes */
   .bg-size-200 { background-size: 200% 200%; }
   .bg-pos-100 { background-position: 100% 100%; }
@@ -230,11 +262,11 @@
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800;
+  @apply bg-gray-100 dark:bg-gray-800 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -249,3 +281,61 @@
 ::selection {
   @apply bg-blue-500/20 text-blue-900 dark:text-blue-100;
 }
+
+/* Smooth Transitions */
+* {
+  @apply transition-colors duration-300;
+}
+
+/* Advanced Gradient Backgrounds */
+.mesh-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  background-size: 400% 400%;
+  animation: meshMove 20s ease infinite;
+}
+
+@keyframes meshMove {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Glow Effect */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Smooth breathing effect instead of shaky animations */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+

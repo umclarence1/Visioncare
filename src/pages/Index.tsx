@@ -12,6 +12,9 @@ import EyeHealthStats from '@/components/EyeHealthStats';
 import EyeExercises from '@/components/EyeExercises';
 import DailyHealthLog from '@/components/DailyHealthLog';
 import EyeCheckupScheduler from '@/components/EyeCheckupScheduler';
+import VoiceAssistant from '@/components/VoiceAssistant';
+import AIInsights from '@/components/AIInsights';
+import GamificationPanel from '@/components/GamificationPanel';
 import { Button } from '@/components/ui/button';
 import { useEyeCare } from '@/contexts/EyeCareContext';
 import { 
@@ -23,7 +26,10 @@ import {
   Calendar,
   Heart,
   Sparkles,
-  Eye
+  Eye,
+  Brain,
+  Mic,
+  Trophy
 } from 'lucide-react';
 
 const Index = () => {
@@ -36,9 +42,12 @@ const Index = () => {
 
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home, gradient: 'from-blue-500 to-blue-600' },
-    { id: 'monitoring', label: 'Analytics', icon: BarChart3, gradient: 'from-purple-500 to-purple-600' },
+    { id: 'ai-insights', label: 'AI Insights', icon: Brain, gradient: 'from-purple-500 to-pink-600' },
+    { id: 'monitoring', label: 'Analytics', icon: BarChart3, gradient: 'from-indigo-500 to-purple-600' },
     { id: 'exercises', label: 'Exercises', icon: Activity, gradient: 'from-emerald-500 to-emerald-600' },
     { id: 'health', label: 'Health Log', icon: Heart, gradient: 'from-red-500 to-pink-600' },
+    { id: 'voice', label: 'Voice AI', icon: Mic, gradient: 'from-teal-500 to-cyan-600' },
+    { id: 'gamification', label: 'Achievements', icon: Trophy, gradient: 'from-yellow-500 to-orange-600' },
     { id: 'education', label: 'Learn', icon: BookOpen, gradient: 'from-amber-500 to-orange-600' },
     { id: 'settings', label: 'Settings', icon: Settings, gradient: 'from-gray-500 to-gray-600' }
   ];
@@ -48,13 +57,32 @@ const Index = () => {
       case 'dashboard':
         return <Dashboard />;
       
+      case 'ai-insights':
+        return (
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container-ai animate-float">
+                  <Brain className="h-6 w-6 text-purple-600" />
+                </div>
+                <h1 className="text-4xl font-bold text-gradient-ai">AI-Powered Insights</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Sparkles className="h-6 w-6 text-yellow-500" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Smart recommendations powered by artificial intelligence</p>
+            </div>
+            <AIInsights />
+          </div>
+        );
+      
       case 'monitoring':
         return (
           <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-4 py-8">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="icon-container animate-float">
-                  <BarChart3 className="h-6 w-6 text-purple-600" />
+                  <BarChart3 className="h-6 w-6 text-indigo-600" />
                 </div>
                 <h1 className="text-4xl font-bold text-gradient">Screen Time & Analytics</h1>
                 <div className="icon-container animate-float delay-500">
@@ -117,6 +145,44 @@ const Index = () => {
               <DailyHealthLog />
               <EyeCheckupScheduler />
             </div>
+          </div>
+        );
+
+      case 'voice':
+        return (
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container-ai animate-float">
+                  <Mic className="h-6 w-6 text-teal-600" />
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">Voice Assistant</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Brain className="h-6 w-6 text-purple-600" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Control your eye care with voice commands</p>
+            </div>
+            <VoiceAssistant />
+          </div>
+        );
+
+      case 'gamification':
+        return (
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center space-y-4 py-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="icon-container-warning animate-float">
+                  <Trophy className="h-6 w-6 text-yellow-600" />
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">Achievements & Progress</h1>
+                <div className="icon-container animate-float delay-500">
+                  <Sparkles className="h-6 w-6 text-yellow-500" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 dark:text-gray-400">Track your progress and unlock achievements</p>
+            </div>
+            <GamificationPanel />
           </div>
         );
       
@@ -203,9 +269,12 @@ const Index = () => {
                       <span className="font-semibold text-lg">{item.label}</span>
                       <span className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
                         {item.id === 'dashboard' && 'Overview & insights'}
+                        {item.id === 'ai-insights' && 'Smart recommendations'}
                         {item.id === 'monitoring' && 'Track screen time'}
                         {item.id === 'exercises' && 'Eye workouts'}
                         {item.id === 'health' && 'Symptom logging'}
+                        {item.id === 'voice' && 'Voice commands'}
+                        {item.id === 'gamification' && 'Progress & rewards'}
                         {item.id === 'education' && 'Tips & guides'}
                         {item.id === 'settings' && 'Customize app'}
                       </span>
@@ -257,13 +326,13 @@ const Index = () => {
               <div className="icon-container animate-float">
                 <Eye className="h-6 w-6 text-blue-600" />
               </div>
-              <p className="text-2xl font-bold text-gradient">VisionCare - Your Comprehensive Eye Wellness Assistant</p>
+              <p className="text-2xl font-bold text-gradient">VisionCare - Your AI-Powered Eye Wellness Assistant</p>
               <div className="icon-container animate-float delay-300">
                 <Sparkles className="h-6 w-6 text-yellow-500" />
               </div>
             </div>
             <p className="text-lg text-gray-600 dark:text-gray-400 font-medium italic">
-              "See Clearly. Live Comfortably. Track Progress."
+              "See Clearly. Live Comfortably. Track Progress with AI."
             </p>
             <div className="flex items-center justify-center gap-2 mt-4">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
