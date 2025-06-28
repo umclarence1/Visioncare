@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Logo from '@/components/Logo';
 import ScreenTimeCard from '@/components/ScreenTimeCard';
@@ -6,12 +7,19 @@ import BrightnessControl from '@/components/BrightnessControl';
 import BreakControls from '@/components/BreakControls';
 import EyeHealthTips from '@/components/EyeHealthTips';
 import EyeHealthStats from '@/components/EyeHealthStats';
+import EyeExercises from '@/components/EyeExercises';
+import DailyHealthLog from '@/components/DailyHealthLog';
+import EyeCheckupScheduler from '@/components/EyeCheckupScheduler';
 import { Button } from '@/components/ui/button';
 import { useEyeCare } from '@/contexts/EyeCareContext';
-import { Timer } from 'lucide-react';
+import { Timer, Bell } from 'lucide-react';
 
 const Index = () => {
-  const { isTracking, startTracking, stopTracking, resetDailyStats } = useEyeCare();
+  const { isTracking, startTracking, stopTracking, resetDailyStats, requestNotificationPermission } = useEyeCare();
+
+  const handleEnableNotifications = () => {
+    requestNotificationPermission();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-all duration-300">
@@ -20,6 +28,14 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <Logo />
             <div className="flex items-center space-x-2">
+              <Button 
+                variant="outline"
+                onClick={handleEnableNotifications}
+                size="sm"
+              >
+                <Bell className="mr-2 h-4 w-4" />
+                Enable Alerts
+              </Button>
               <Button 
                 variant={isTracking ? "destructive" : "default"}
                 onClick={isTracking ? stopTracking : startTracking}
@@ -46,10 +62,11 @@ const Index = () => {
             Your Personal Eye Wellness Assistant
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Monitor and manage your screen time for healthier vision.
+            Monitor and manage your screen time for healthier vision with comprehensive eye care tools.
           </p>
         </div>
 
+        {/* Core monitoring section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="transition-all duration-300 hover:scale-[1.02]">
             <ScreenTimeCard />
@@ -59,6 +76,7 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Analytics section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <div className="transition-all duration-300 hover:scale-[1.02]">
             <WeeklyScreenTimeChart />
@@ -68,10 +86,28 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Active care section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <div className="transition-all duration-300 hover:scale-[1.02]">
             <BreakControls />
           </div>
+          <div className="transition-all duration-300 hover:scale-[1.02]">
+            <EyeExercises />
+          </div>
+        </div>
+
+        {/* Health tracking section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="transition-all duration-300 hover:scale-[1.02]">
+            <DailyHealthLog />
+          </div>
+          <div className="transition-all duration-300 hover:scale-[1.02]">
+            <EyeCheckupScheduler />
+          </div>
+        </div>
+
+        {/* Tips section */}
+        <div className="grid grid-cols-1 gap-6">
           <div className="transition-all duration-300 hover:scale-[1.02]">
             <EyeHealthTips />
           </div>
@@ -81,8 +117,8 @@ const Index = () => {
       <footer className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-700 mt-12">
         <div className="container mx-auto py-6 px-4">
           <div className="text-center space-y-2">
-            <p className="text-primary font-semibold text-lg">VisionCare - Your Personal Eye Wellness Assistant</p>
-            <p className="text-sm text-muted-foreground">"See Clearly. Live Comfortably."</p>
+            <p className="text-primary font-semibold text-lg">VisionCare - Your Comprehensive Eye Wellness Assistant</p>
+            <p className="text-sm text-muted-foreground">"See Clearly. Live Comfortably. Track Progress."</p>
           </div>
         </div>
       </footer>
