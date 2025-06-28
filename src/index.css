@@ -101,172 +101,334 @@
 }
 
 @layer components {
-  /* Advanced Glass Morphism Cards */
+  /* INNOVATIVE GLASS MORPHISM SYSTEM */
   .glass-card {
-    @apply bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl;
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-2xl border border-white/30 dark:border-white/10 
+           shadow-[0_8px_32px_rgba(31,38,135,0.37)] relative overflow-hidden;
+  }
+  
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none;
   }
   
   .glass-card-strong {
-    @apply bg-white/20 dark:bg-white/10 backdrop-blur-2xl border border-white/30 dark:border-white/20 shadow-2xl;
+    @apply bg-white/90 dark:bg-gray-800/90 backdrop-blur-3xl border border-white/40 dark:border-white/20 
+           shadow-[0_12px_40px_rgba(31,38,135,0.5)] relative overflow-hidden;
   }
   
-  /* Innovative Neuomorphic Cards */
+  /* ADVANCED NEUOMORPHIC DESIGN */
   .neuro-card {
-    @apply bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-black 
-           shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] 
-           dark:shadow-[8px_8px_16px_#0f0f0f,-8px_-8px_16px_#2a2a2a] 
-           border border-gray-200/50 dark:border-gray-700/50;
+    @apply bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-950
+           shadow-[12px_12px_24px_#c8d0e7,-12px_-12px_24px_#ffffff] 
+           dark:shadow-[12px_12px_24px_#0a0a0a,-12px_-12px_24px_#2a2a2a] 
+           border border-gray-200/30 dark:border-gray-700/30 relative overflow-hidden;
+  }
+  
+  .neuro-card::before {
+    content: '';
+    @apply absolute inset-[1px] bg-gradient-to-br from-white/60 to-transparent rounded-[inherit] pointer-events-none;
   }
   
   .neuro-card-inset {
-    @apply bg-gradient-to-br from-gray-100 via-gray-50 to-white dark:from-black dark:via-gray-900 dark:to-gray-800
-           shadow-[inset_8px_8px_16px_#d1d9e6,inset_-8px_-8px_16px_#ffffff] 
-           dark:shadow-[inset_8px_8px_16px_#0f0f0f,inset_-8px_-8px_16px_#2a2a2a];
+    @apply bg-gradient-to-br from-gray-100 via-gray-50 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-800
+           shadow-[inset_12px_12px_24px_#c8d0e7,inset_-12px_-12px_24px_#ffffff] 
+           dark:shadow-[inset_12px_12px_24px_#0a0a0a,inset_-12px_-12px_24px_#2a2a2a];
   }
   
-  /* Professional Gradient Cards */
-  .pro-card {
-    @apply bg-gradient-to-br from-white via-white to-azure-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/30 
-           border border-gray-200/60 dark:border-gray-700/60 shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10;
+  /* PROFESSIONAL FLOATING CARDS */
+  .floating-card {
+    @apply bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-0
+           shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.3)]
+           relative overflow-hidden transition-all duration-700 ease-out;
   }
   
-  .pro-card-hover {
-    @apply transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-[1.02] hover:-translate-y-1;
+  .floating-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none;
   }
   
-  /* Innovative Buttons */
+  .floating-card:hover {
+    @apply transform translate-y-[-8px] shadow-[0_32px_80px_rgba(0,0,0,0.12)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.4)];
+  }
+  
+  /* INNOVATIVE BUTTON SYSTEM */
   .btn-innovative {
-    @apply relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-size-200 
-           text-white font-semibold py-3 px-8 rounded-2xl shadow-lg 
-           transition-all duration-300 hover:bg-pos-100 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105;
+    @apply relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 
+           text-white font-semibold py-4 px-8 rounded-2xl 
+           transition-all duration-500 ease-out transform-gpu;
   }
   
   .btn-innovative::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full transition-transform duration-1000;
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent 
+           translate-x-[-100%] skew-x-12 transition-transform duration-700;
   }
   
   .btn-innovative:hover::before {
-    @apply translate-x-full;
+    @apply translate-x-[100%];
   }
   
-  /* Voice Assistant Button */
+  .btn-innovative:hover {
+    @apply transform scale-105 shadow-[0_20px_40px_rgba(59,130,246,0.4)];
+  }
+  
+  /* SMOOTH VOICE BUTTON */
   .btn-voice {
-    @apply relative bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full p-4 
-           shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/50 
-           hover:scale-110 active:scale-95;
+    @apply relative bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full p-6
+           transition-all duration-500 ease-out transform-gpu;
+  }
+  
+  .btn-voice:hover {
+    @apply transform scale-110 shadow-[0_20px_40px_rgba(16,185,129,0.4)];
   }
   
   .btn-voice.recording {
-    @apply animate-pulse bg-gradient-to-r from-red-500 to-pink-500 shadow-red-500/50;
+    @apply bg-gradient-to-r from-red-500 to-pink-600 shadow-[0_20px_40px_rgba(239,68,68,0.4)];
+    animation: recording-pulse 2s ease-in-out infinite;
   }
   
-  /* AI Insights Panel */
+  /* AI INSIGHTS PANEL */
   .ai-insights {
-    @apply bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-purple-950/20 dark:via-gray-900 dark:to-blue-950/20
-           border border-purple-200/50 dark:border-purple-700/50 rounded-3xl p-6 shadow-xl shadow-purple-500/10;
+    @apply relative bg-gradient-to-br from-purple-50/80 via-white/90 to-blue-50/80 
+           dark:from-purple-950/30 dark:via-gray-900/90 dark:to-blue-950/30
+           backdrop-blur-xl border border-purple-200/40 dark:border-purple-700/40 
+           shadow-[0_24px_60px_rgba(147,51,234,0.1)] rounded-3xl overflow-hidden;
   }
   
-  /* Gamification Elements */
+  .ai-insights::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-purple-400/10 via-transparent to-blue-400/10 pointer-events-none;
+  }
+  
+  /* GAMIFICATION ELEMENTS */
   .achievement-badge {
-    @apply inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 
-           text-white font-bold py-2 px-4 rounded-full shadow-lg shadow-yellow-500/30 
-           transform hover:scale-105 transition-all duration-300;
+    @apply inline-flex items-center gap-3 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 
+           text-white font-bold py-3 px-6 rounded-full 
+           shadow-[0_12px_30px_rgba(251,191,36,0.4)]
+           transition-all duration-500 ease-out transform-gpu;
+  }
+  
+  .achievement-badge:hover {
+    @apply transform scale-105 shadow-[0_20px_40px_rgba(251,191,36,0.6)];
   }
   
   .streak-counter {
-    @apply bg-gradient-to-r from-emerald-400 to-cyan-400 text-white font-bold text-2xl 
-           rounded-full w-16 h-16 flex items-center justify-center shadow-lg shadow-emerald-500/30;
+    @apply bg-gradient-to-br from-emerald-400 to-cyan-600 text-white font-bold text-3xl 
+           rounded-2xl w-20 h-20 flex items-center justify-center 
+           shadow-[0_12px_30px_rgba(16,185,129,0.4)]
+           transition-all duration-500 ease-out;
   }
   
-  /* Status Indicators */
+  /* SMOOTH STATUS INDICATORS */
   .status-indicator {
-    @apply relative inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply relative inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
+           transition-all duration-300 ease-out;
   }
   
   .status-active {
-    @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300;
+    @apply bg-emerald-100/80 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300
+           border border-emerald-200/50 dark:border-emerald-700/50;
   }
   
   .status-active::before {
     content: '';
-    @apply absolute left-2 w-2 h-2 bg-emerald-500 rounded-full;
+    @apply absolute left-3 w-2 h-2 bg-emerald-500 rounded-full;
+    animation: status-pulse 2s ease-in-out infinite;
   }
   
   .status-warning {
-    @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300;
+    @apply bg-amber-100/80 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300
+           border border-amber-200/50 dark:border-amber-700/50;
   }
   
   .status-danger {
-    @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
+    @apply bg-red-100/80 text-red-800 dark:bg-red-900/40 dark:text-red-300
+           border border-red-200/50 dark:border-red-700/50;
   }
   
-  /* Advanced Progress Bars */
+  /* PROFESSIONAL PROGRESS BARS */
   .progress-innovative {
-    @apply h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative;
+    @apply h-6 bg-gray-200/60 dark:bg-gray-700/60 rounded-full overflow-hidden relative;
   }
   
-  .progress-innovative::before {
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full
+           transition-all duration-1000 ease-out relative overflow-hidden;
+  }
+  
+  .progress-fill::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-size-200;
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent;
+    animation: progress-shimmer 2s ease-in-out infinite;
   }
   
-  /* Backdrop Effects */
+  /* BACKDROP EFFECTS */
   .backdrop-professional {
-    @apply backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-white/10;
+    @apply backdrop-blur-2xl bg-white/85 dark:bg-gray-900/85 
+           border border-white/30 dark:border-white/10
+           shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)];
   }
   
-  /* Text Gradients */
+  /* INNOVATIVE TEXT GRADIENTS */
   .text-gradient {
-    @apply bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent;
   }
   
   .text-gradient-emerald {
-    @apply bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent;
   }
   
   .text-gradient-ai {
     @apply bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent;
   }
   
-  /* Icon Containers */
+  /* PROFESSIONAL ICON CONTAINERS */
   .icon-container {
-    @apply p-3 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-200/50 dark:border-blue-700/50;
+    @apply p-4 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 
+           border border-blue-200/30 dark:border-blue-700/30
+           transition-all duration-500 ease-out;
+  }
+  
+  .icon-container:hover {
+    @apply transform scale-105 shadow-[0_12px_24px_rgba(59,130,246,0.2)];
   }
   
   .icon-container-success {
-    @apply p-3 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-200/50 dark:border-emerald-700/50;
+    @apply p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 
+           border border-emerald-200/30 dark:border-emerald-700/30
+           transition-all duration-500 ease-out;
+  }
+  
+  .icon-container-success:hover {
+    @apply transform scale-105 shadow-[0_12px_24px_rgba(16,185,129,0.2)];
   }
   
   .icon-container-warning {
-    @apply p-3 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-200/50 dark:border-amber-700/50;
+    @apply p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 
+           border border-amber-200/30 dark:border-amber-700/30
+           transition-all duration-500 ease-out;
+  }
+  
+  .icon-container-warning:hover {
+    @apply transform scale-105 shadow-[0_12px_24px_rgba(245,158,11,0.2)];
   }
   
   .icon-container-ai {
-    @apply p-3 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-200/50 dark:border-purple-700/50;
+    @apply p-4 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 
+           border border-purple-200/30 dark:border-purple-700/30
+           transition-all duration-500 ease-out;
   }
   
-  /* Health Score Ring */
+  .icon-container-ai:hover {
+    @apply transform scale-105 shadow-[0_12px_24px_rgba(147,51,234,0.2)];
+  }
+  
+  /* PROFESSIONAL CARD HOVER EFFECTS */
+  .pro-card {
+    @apply bg-gradient-to-br from-white via-white to-blue-50/30 
+           dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/20 
+           border border-gray-200/40 dark:border-gray-700/40 
+           shadow-[0_8px_24px_rgba(59,130,246,0.08)] dark:shadow-[0_8px_24px_rgba(59,130,246,0.12)]
+           transition-all duration-500 ease-out;
+  }
+  
+  .pro-card-hover {
+    @apply hover:shadow-[0_20px_40px_rgba(59,130,246,0.15)] hover:scale-[1.02] hover:-translate-y-2;
+  }
+  
+  /* HEALTH SCORE RING */
   .health-ring {
-    @apply relative w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-1;
+    @apply relative w-36 h-36 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 p-2
+           shadow-[0_12px_30px_rgba(59,130,246,0.3)]
+           transition-all duration-700 ease-out;
   }
   
   .health-ring-inner {
-    @apply w-full h-full rounded-full bg-white dark:bg-gray-900 flex items-center justify-center;
+    @apply w-full h-full rounded-full bg-white dark:bg-gray-900 flex items-center justify-center
+           shadow-[inset_0_4px_12px_rgba(0,0,0,0.1)];
   }
-  
-  /* Utility Classes */
-  .bg-size-200 { background-size: 200% 200%; }
-  .bg-pos-100 { background-position: 100% 100%; }
 }
 
-/* Custom Scrollbar */
+/* SMOOTH KEYFRAME ANIMATIONS */
+@keyframes recording-pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 20px 40px rgba(239,68,68,0.4);
+  }
+  50% { 
+    transform: scale(1.05); 
+    box-shadow: 0 25px 50px rgba(239,68,68,0.6);
+  }
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes progress-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* SMOOTH ENTRANCE ANIMATIONS */
+@keyframes smooth-fade-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+@keyframes smooth-slide-up {
+  from { 
+    opacity: 0; 
+    transform: translateY(40px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes professional-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.4); }
+}
+
+/* UTILITY ANIMATIONS */
+.animate-smooth-fade-in {
+  animation: smooth-fade-in 0.8s ease-out;
+}
+
+.animate-smooth-slide-up {
+  animation: smooth-slide-up 1s ease-out;
+}
+
+.animate-gentle-float {
+  animation: gentle-float 4s ease-in-out infinite;
+}
+
+.animate-professional-glow {
+  animation: professional-glow 3s ease-in-out infinite;
+}
+
+/* CUSTOM SCROLLBAR */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800 rounded-full;
+  @apply bg-gray-100/50 dark:bg-gray-800/50 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -277,65 +439,27 @@
   @apply from-blue-500 to-purple-600;
 }
 
-/* Selection Styling */
+/* SELECTION STYLING */
 ::selection {
   @apply bg-blue-500/20 text-blue-900 dark:text-blue-100;
 }
 
-/* Smooth Transitions */
+/* SMOOTH TRANSITIONS FOR ALL ELEMENTS */
 * {
   @apply transition-colors duration-300;
 }
 
-/* Advanced Gradient Backgrounds */
-.mesh-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-  background-size: 400% 400%;
-  animation: meshMove 20s ease infinite;
+/* Remove any remaining shaky or jarring animations */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-pulse {
+    animation: none;
+  }
+  
+  .animate-spin {
+    animation: none;
+  }
+  
+  .animate-bounce {
+    animation: none;
+  }
 }
-
-@keyframes meshMove {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* Floating Animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Glow Effect */
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
-}
-
-/* Fade In Animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
-
-/* Smooth breathing effect instead of shaky animations */
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-.animate-breathe {
-  animation: breathe 4s ease-in-out infinite;
-}
-
