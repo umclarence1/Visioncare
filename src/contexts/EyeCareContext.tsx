@@ -39,6 +39,8 @@ interface EyeCareContextType {
   currentExercise: EyeExercise | null;
   isExercising: boolean;
   nextCheckupDate: string | null;
+  onboardingCompleted: boolean;
+  userPreferences: any;
   updateBreakSettings: (settings: Partial<BreakSetting>) => void;
   updateBrightness: (level: number) => void;
   startTracking: () => void;
@@ -51,6 +53,7 @@ interface EyeCareContextType {
   endExercise: () => void;
   setNextCheckup: (date: string) => void;
   requestNotificationPermission: () => Promise<boolean>;
+  setOnboardingComplete: (preferences: any) => void;
 }
 
 const defaultScreenTime: ScreenTime = {
@@ -115,12 +118,14 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
   const [trackingInterval, setTrackingInterval] = useState<number | null>(null);
   const [breakCheckInterval, setBreakCheckInterval] = useState<number | null>(null);
   
-  // New state for enhanced features
+  // Enhanced state
   const [healthLogs, setHealthLogs] = useState<HealthLogEntry[]>([]);
   const [currentExercise, setCurrentExercise] = useState<EyeExercise | null>(null);
   const [isExercising, setIsExercising] = useState<boolean>(false);
   const [nextCheckupDate, setNextCheckupDate] = useState<string | null>(null);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean>(false);
+  const [userPreferences, setUserPreferences] = useState<any>(null);
 
   useEffect(() => {
     const savedScreenTime = localStorage.getItem('screenTime');
@@ -164,23 +169,31 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
     return false;
   };
 
+  // Enhanced break checking with smarter timing
   useEffect(() => {
-    if (isTracking && breakSettings.enabled) {
+    if (isTracking && breakSettings.enabled && userPreferences?.workingHours) {
       const checkForBreak = () => {
-        const intervalMs = breakSettings.interval * 60 * 1000;
-        const currentDailyMs = screenTime.daily * 60 * 1000;
+        const now = new Date();
+        const currentHour = now.getHours();
+        const { start, end } = userPreferences.workingHours;
         
-        if (currentDailyMs % intervalMs < 60000 && currentDailyMs > 0) {
-          const message = `You've been looking at the screen for ${breakSettings.interval} minutes. Take a ${breakSettings.duration} minute break.`;
+        // Only show breaks during working hours
+        if (currentHour >= start && currentHour <= end) {
+          const intervalMs = breakSettings.interval * 60 * 1000;
+          const currentDailyMs = screenTime.daily * 60 * 1000;
           
-          toast({
-            title: "🔔 Time for an eye break!",
-            description: message,
-            duration: 10000,
-          });
-          
-          showNotification("👁️ VisionCare - Eye Break Time!", message);
-          startBreak();
+          if (currentDailyMs % intervalMs < 60000 && currentDailyMs > 0) {
+            const message = `Time for your ${breakSettings.duration}-minute eye break! Look at something 20 feet away.`;
+            
+            toast({
+              title: "👁️ Break Time!",
+              description: message,
+              duration: 10000,
+            });
+            
+            showNotification("VisionCare - Eye Break", message);
+            startBreak();
+          }
         }
       };
 
@@ -191,30 +204,29 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
         if (breakCheckInterval) clearInterval(breakCheckInterval);
       };
     }
-  }, [isTracking, screenTime.daily, breakSettings, notificationPermission]);
+  }, [isTracking, screenTime.daily, breakSettings, notificationPermission, userPreferences]);
 
-  // Night mode detection and blue light reminders
+  // Smart night mode detection
   useEffect(() => {
     const checkNightMode = () => {
       const hour = new Date().getHours();
-      const isNightTime = hour >= 19 || hour <= 6; // 7PM to 6AM
+      const isNightTime = hour >= 19 || hour <= 6;
       
-      if (isNightTime && brightness > 50) {
+      if (isNightTime && brightness > 50 && screenTime.daily > 60) {
         toast({
-          title: "🌙 Night Mode Reminder",
-          description: "Consider reducing screen brightness and enabling blue light filter for better sleep.",
+          title: "🌙 Night Mode Recommended",
+          description: "Consider reducing brightness and enabling blue light filter for better sleep quality.",
           duration: 8000,
         });
         
-        showNotification("🌙 VisionCare - Night Mode", "Consider enabling blue light filter and reducing brightness.");
+        showNotification("VisionCare - Night Mode", "Enable blue light filter for healthier evening usage.");
       }
     };
 
-    // Check every hour
-    const nightModeInterval = setInterval(checkNightMode, 3600000);
+    const nightModeInterval = setInterval(checkNightMode, 1800000); // Check every 30 minutes
     
     return () => clearInterval(nightModeInterval);
-  }, [brightness, notificationPermission]);
+  }, [brightness, screenTime.daily, notificationPermission]);
 
   const updateBreakSettings = (settings: Partial<BreakSetting>) => {
     setBreakSettings(prev => ({ ...prev, ...settings }));
@@ -356,6 +368,57 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const setOnboardingComplete = (preferences: any) => {
+    setOnboardingCompleted(true);
+    setUserPreferences(preferences);
+    setBreakSettings(prev => ({ 
+      ...prev, 
+      interval: preferences.reminderInterval || 20 
+    }));
+    
+    localStorage.setItem('onboardingCompleted', 'true');
+    localStorage.setItem('userPreferences', JSON.stringify(preferences));
+    
+    toast({
+      title: "Welcome to VisionCare!",
+      description: "Your personalized eye care companion is ready.",
+    });
+  };
+
+  // Initialize from localStorage
+  useEffect(() => {
+    const savedOnboarding = localStorage.getItem('onboardingCompleted');
+    const savedPreferences = localStorage.getItem('userPreferences');
+    
+    if (savedOnboarding === 'true') {
+      setOnboardingCompleted(true);
+    }
+    
+    if (savedPreferences) {
+      setUserPreferences(JSON.parse(savedPreferences));
+    }
+
+    const savedScreenTime = localStorage.getItem('screenTime');
+    const savedBreakSettings = localStorage.getItem('breakSettings');
+    const savedBrightness = localStorage.getItem('brightness');
+    const savedHealthLogs = localStorage.getItem('healthLogs');
+    const savedCheckupDate = localStorage.getItem('nextCheckupDate');
+
+    if (savedScreenTime) setScreenTime(JSON.parse(savedScreenTime));
+    if (savedBreakSettings) setBreakSettings(JSON.parse(savedBreakSettings));
+    if (savedBrightness) setBrightness(Number(savedBrightness));
+    if (savedHealthLogs) setHealthLogs(JSON.parse(savedHealthLogs));
+    if (savedCheckupDate) setNextCheckupDate(savedCheckupDate);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('screenTime', JSON.stringify(screenTime));
+    localStorage.setItem('breakSettings', JSON.stringify(breakSettings));
+    localStorage.setItem('brightness', brightness.toString());
+    localStorage.setItem('healthLogs', JSON.stringify(healthLogs));
+    if (nextCheckupDate) localStorage.setItem('nextCheckupDate', nextCheckupDate);
+  }, [screenTime, breakSettings, brightness, healthLogs, nextCheckupDate]);
+
   useEffect(() => {
     startTracking();
     requestNotificationPermission();
@@ -377,6 +440,8 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
       currentExercise,
       isExercising,
       nextCheckupDate,
+      onboardingCompleted,
+      userPreferences,
       updateBreakSettings,
       updateBrightness,
       startTracking,
@@ -388,7 +453,8 @@ export const EyeCareProvider = ({ children }: { children: ReactNode }) => {
       startExercise,
       endExercise,
       setNextCheckup,
-      requestNotificationPermission
+      requestNotificationPermission,
+      setOnboardingComplete
     }}>
       {children}
     </EyeCareContext.Provider>
