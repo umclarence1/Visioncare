@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useEyeCare } from '@/contexts/EyeCareContext';
+import { Link } from 'react-router-dom';
 import { 
   Eye, 
   Clock, 
@@ -14,12 +16,9 @@ import {
   CheckCircle,
   Timer,
   Heart,
-  Sparkles,
-  Shield,
-  Zap,
+  ArrowRight,
   Target,
-  Award,
-  BarChart3
+  Zap
 } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
@@ -32,17 +31,13 @@ const DashboardPage: React.FC = () => {
     currentExercise 
   } = useEyeCare();
 
-  // Calculate health score based on multiple factors
   const calculateHealthScore = () => {
     let score = 100;
-    
-    // Screen time impact
     const dailyHours = screenTime.daily / 60;
     if (dailyHours > 8) score -= 30;
     else if (dailyHours > 6) score -= 20;
     else if (dailyHours > 4) score -= 10;
     
-    // Recent symptoms impact
     const recentLogs = healthLogs.filter(log => {
       const logDate = new Date(log.date);
       const weekAgo = new Date();
@@ -55,31 +50,21 @@ const DashboardPage: React.FC = () => {
       : 0;
     
     score -= avgSeverity * 10;
-    
     return Math.max(0, Math.min(100, score));
   };
 
   const healthScore = calculateHealthScore();
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-emerald-600 dark:text-emerald-400';
-    if (score >= 60) return 'text-amber-600 dark:text-amber-400';
-    return 'text-red-600 dark:text-red-400';
+    if (score >= 80) return 'text-green-500';
+    if (score >= 60) return 'text-yellow-500';
+    return 'text-red-500';
   };
 
-  const getScoreGradient = (score: number) => {
-    if (score >= 80) return 'from-emerald-500 to-teal-500';
-    if (score >= 60) return 'from-amber-500 to-orange-500';
-    return 'from-red-500 to-pink-500';
-  };
-
-  const getNextBreakTime = () => {
-    const nextBreak = new Date();
-    nextBreak.setMinutes(nextBreak.getMinutes() + (breakSettings.interval - (screenTime.daily % breakSettings.interval)));
-    return nextBreak.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    });
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
   };
 
   const getDaysUntilCheckup = () => {
@@ -90,336 +75,224 @@ const DashboardPage: React.FC = () => {
 
   const checkupDays = getDaysUntilCheckup();
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  };
-
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Welcome Header */}
-      <div className="text-center space-y-4 py-8">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="icon-container animate-float">
-            <Sparkles className="h-6 w-6 text-yellow-500" />
-          </div>
-          <h1 className="text-4xl font-bold text-gradient">
-            {getGreeting()}!
-          </h1>
-          <div className="icon-container animate-float delay-500">
-            <Eye className="h-6 w-6 text-blue-600" />
-          </div>
-        </div>
-        <p className="text-xl text-gray-600 dark:text-gray-400 font-medium">
-          Your comprehensive eye health overview for today
+      {/* Welcome Section */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+          {getGreeting()}!
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Your comprehensive eye health dashboard - tracking, protecting, and optimizing your vision wellness
         </p>
-        <div className="flex items-center justify-center gap-2 mt-4">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-          <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-200"></div>
-          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-400"></div>
-        </div>
       </div>
 
-      {/* Health Score & Quick Stats */}
+      {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="floating-card border-none">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Health Score</p>
-                <p className={`text-4xl font-bold ${getScoreColor(healthScore)} animate-pulse`}>
+                <p className="text-sm font-medium text-muted-foreground">Health Score</p>
+                <p className={`text-3xl font-bold ${getScoreColor(healthScore)}`}>
                   {Math.round(healthScore)}
                 </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {healthScore >= 80 ? 'Excellent' : healthScore >= 60 ? 'Good' : 'Needs Attention'}
+                </p>
               </div>
-              <div className="icon-container-success">
-                <Heart className={`h-8 w-8 ${getScoreColor(healthScore)} animate-breathe`} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Progress value={healthScore} className="h-3 rounded-full bg-gray-200 dark:bg-gray-700">
-                <div 
-                  className={`h-full bg-gradient-to-r ${getScoreGradient(healthScore)} rounded-full transition-all duration-1000 ease-out`}
-                  style={{ width: `${healthScore}%` }}
-                />
-              </Progress>
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Poor</span>
-                <span className="text-gray-500">Excellent</span>
+              <div className="relative">
+                <Heart className={`h-12 w-12 ${getScoreColor(healthScore)}`} />
+                <div className="absolute inset-0 bg-current opacity-20 rounded-full blur-xl"></div>
               </div>
             </div>
+            <Progress value={healthScore} className="mt-4 h-2" />
           </CardContent>
         </Card>
 
-        <Card className="floating-card border-none">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Screen Time</p>
-                <p className="text-4xl font-bold text-gradient">
+                <p className="text-sm font-medium text-muted-foreground">Screen Time Today</p>
+                <p className="text-3xl font-bold text-primary">
                   {Math.floor(screenTime.daily / 60)}h {Math.floor(screenTime.daily % 60)}m
                 </p>
+                <Badge variant={screenTime.daily > 360 ? "destructive" : screenTime.daily > 240 ? "secondary" : "outline"} className="text-xs mt-1">
+                  {screenTime.daily > 360 ? 'High usage' : screenTime.daily > 240 ? 'Moderate' : 'Good'}
+                </Badge>
               </div>
-              <div className="icon-container">
-                <Eye className="h-8 w-8 text-blue-600 animate-pulse" />
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge 
-                variant={screenTime.daily > 360 ? "destructive" : screenTime.daily > 240 ? "secondary" : "outline"}
-                className="px-3 py-1 rounded-full font-medium"
-              >
-                {screenTime.daily > 360 ? '🔴 High usage' : screenTime.daily > 240 ? '🟡 Moderate' : '🟢 Good'}
-              </Badge>
+              <Eye className="h-12 w-12 text-primary" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="floating-card border-none">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Next Break</p>
-                <p className="text-4xl font-bold text-blue-600 dark:text-blue-400 animate-pulse">
-                  {getNextBreakTime()}
+                <p className="text-sm font-medium text-muted-foreground">Next Break</p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {breakSettings.interval - (screenTime.daily % breakSettings.interval)} min
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Every {breakSettings.interval} minutes
                 </p>
               </div>
-              <div className="icon-container-warning">
-                <Timer className="h-8 w-8 text-amber-600 animate-spin" style={{ animationDuration: '3s' }} />
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="px-3 py-1 rounded-full font-medium">
-                ⏰ Every {breakSettings.interval} minutes
-              </Badge>
+              <Timer className="h-12 w-12 text-purple-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="floating-card border-none">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Checkup</p>
-                <p className="text-4xl font-bold text-purple-600 dark:text-purple-400">
+                <p className="text-sm font-medium text-muted-foreground">Next Checkup</p>
+                <p className="text-2xl font-bold text-orange-600">
                   {checkupDays !== null ? (
-                    checkupDays <= 0 ? 'Due' : `${checkupDays}d`
+                    checkupDays <= 0 ? 'Due Now' : `${checkupDays} days`
                   ) : 'Not set'}
                 </p>
+                <Badge variant={checkupDays !== null && checkupDays <= 7 ? "destructive" : "outline"} className="text-xs mt-1">
+                  {checkupDays !== null && checkupDays <= 0 ? 'Overdue' : checkupDays !== null && checkupDays <= 7 ? 'Due soon' : 'Scheduled'}
+                </Badge>
               </div>
-              <div className={`${checkupDays !== null && checkupDays <= 7 ? 'icon-container-warning' : 'icon-container-success'}`}>
-                <Calendar className={`h-8 w-8 ${checkupDays !== null && checkupDays <= 7 ? 'text-red-600' : 'text-emerald-600'} animate-pulse`} />
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge 
-                variant={checkupDays !== null && checkupDays <= 7 ? "destructive" : "outline"}
-                className="px-3 py-1 rounded-full font-medium"
-              >
-                {checkupDays !== null && checkupDays <= 0 ? '🚨 Overdue' : 
-                 checkupDays !== null && checkupDays <= 7 ? '⚠️ Due soon' : '✅ Scheduled'}
-              </Badge>
+              <Calendar className={`h-12 w-12 ${checkupDays !== null && checkupDays <= 7 ? 'text-red-500' : 'text-orange-600'}`} />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Active Exercise Status */}
+      {/* Active Exercise Alert */}
       {isExercising && currentExercise && (
-        <Card className="border-2 border-emerald-500/50 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 dark:from-emerald-950/20 dark:via-gray-900 dark:to-emerald-950/20 animate-glow">
+        <Card className="border-primary bg-gradient-to-r from-primary/10 to-blue-500/10">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="icon-container-success animate-pulse">
-                  <Activity className="h-6 w-6 text-emerald-600" />
+                <div className="p-3 bg-primary/20 rounded-full">
+                  <Activity className="h-6 w-6 text-primary animate-pulse" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-emerald-800 dark:text-emerald-200">Exercise in Progress</p>
-                  <p className="text-lg text-emerald-600 dark:text-emerald-400 font-medium">{currentExercise.name}</p>
+                  <h3 className="font-semibold text-lg">Exercise in Progress</h3>
+                  <p className="text-muted-foreground">{currentExercise.name} - Keep focusing!</p>
                 </div>
               </div>
-              <Badge className="status-indicator status-active text-lg px-4 py-2 animate-pulse">
-                🎯 Active
-              </Badge>
+              <Badge className="px-4 py-2">Active Session</Badge>
             </div>
           </CardContent>
         </Card>
       )}
 
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 bg-gradient-to-br from-white to-blue-50/50 dark:from-gray-800 dark:to-blue-900/20">
+          <Link to="/exercises">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full group-hover:scale-110 transition-transform">
+                  <Activity className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold">Eye Exercises</h3>
+                  <p className="text-sm text-muted-foreground">Strengthen and relax your vision</p>
+                </div>
+                <ArrowRight className="h-5 w-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </div>
+            </CardContent>
+          </Link>
+        </Card>
+
+        <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 bg-gradient-to-br from-white to-purple-50/50 dark:from-gray-800 dark:to-purple-900/20">
+          <Link to="/monitoring">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-full group-hover:scale-110 transition-transform">
+                  <BarChart3 className="h-6 w-6 text-purple-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold">Screen Monitoring</h3>
+                  <p className="text-sm text-muted-foreground">Track usage and breaks</p>
+                </div>
+                <ArrowRight className="h-5 w-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </div>
+            </CardContent>
+          </Link>
+        </Card>
+
+        <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 bg-gradient-to-br from-white to-red-50/50 dark:from-gray-800 dark:to-red-900/20">
+          <Link to="/health">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-red-100 dark:bg-red-900/20 rounded-full group-hover:scale-110 transition-transform">
+                  <Heart className="h-6 w-6 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold">Health Tracking</h3>
+                  <p className="text-sm text-muted-foreground">Log symptoms & schedule checkups</p>
+                </div>
+                <ArrowRight className="h-5 w-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </div>
+            </CardContent>
+          </Link>
+        </Card>
+      </div>
+
       {/* Today's Priorities */}
-      <Card className="floating-card border-none">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-2xl">
-            <div className="icon-container">
-              <Target className="h-6 w-6 text-blue-600" />
-            </div>
-            <span className="text-gradient">Today's Eye Care Priorities</span>
-            <div className="icon-container animate-float">
-              <Award className="h-5 w-5 text-yellow-500" />
-            </div>
+      <Card className="border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center text-xl">
+            <Target className="mr-3 h-6 w-6 text-primary" />
+            Today's Eye Care Priorities
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 pro-card rounded-2xl pro-card-hover">
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 rounded-lg">
               <div className="flex items-center space-x-4">
-                <div className="icon-container">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-full">
                   <Clock className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-lg">Take regular breaks</p>
-                  <p className="text-gray-600 dark:text-gray-400">Follow the 20-20-20 rule</p>
+                  <p className="font-medium">Take Regular Breaks</p>
+                  <p className="text-sm text-muted-foreground">Follow the 20-20-20 rule consistently</p>
                 </div>
               </div>
-              <Badge variant="outline" className="px-3 py-1 rounded-full font-medium">
-                Every {breakSettings.interval}min
-              </Badge>
+              <Badge variant="outline">Every {breakSettings.interval}min</Badge>
             </div>
 
-            <div className="flex items-center justify-between p-4 pro-card rounded-2xl pro-card-hover">
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg">
               <div className="flex items-center space-x-4">
-                <div className="icon-container-success">
-                  <Activity className="h-5 w-5 text-emerald-600" />
+                <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-full">
+                  <Activity className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-lg">Complete eye exercises</p>
-                  <p className="text-gray-600 dark:text-gray-400">Strengthen and relax your eyes</p>
+                  <p className="font-medium">Complete Eye Exercises</p>
+                  <p className="text-sm text-muted-foreground">Strengthen and relax your eye muscles</p>
                 </div>
               </div>
-              <Badge variant={isExercising ? "default" : "outline"} className="px-3 py-1 rounded-full font-medium">
-                {isExercising ? "🎯 In Progress" : "⏳ Pending"}
+              <Badge variant={isExercising ? "default" : "outline"}>
+                {isExercising ? "In Progress" : "Pending"}
               </Badge>
             </div>
 
-            {healthLogs.length === 0 && (
-              <div className="flex items-center justify-between p-4 pro-card rounded-2xl pro-card-hover">
-                <div className="flex items-center space-x-4">
-                  <div className="icon-container-warning">
-                    <TrendingUp className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-lg">Log your symptoms</p>
-                    <p className="text-gray-600 dark:text-gray-400">Track your eye health progress</p>
-                  </div>
-                </div>
-                <Badge variant="outline" className="px-3 py-1 rounded-full font-medium">
-                  ✨ New
-                </Badge>
-              </div>
-            )}
-
             {screenTime.daily > 300 && (
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-2xl border border-amber-200/50 dark:border-amber-700/50">
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 rounded-lg">
                 <div className="flex items-center space-x-4">
-                  <div className="icon-container-warning">
-                    <AlertCircle className="h-5 w-5 text-amber-600 animate-pulse" />
+                  <div className="p-2 bg-yellow-100 dark:bg-yellow-900/20 rounded-full">
+                    <AlertCircle className="h-5 w-5 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-lg text-amber-800 dark:text-amber-200">High screen time detected</p>
-                    <p className="text-amber-600 dark:text-amber-400">Consider taking longer breaks</p>
+                    <p className="font-medium">High Screen Time Alert</p>
+                    <p className="text-sm text-muted-foreground">Consider taking longer breaks and reducing usage</p>
                   </div>
                 </div>
-                <Badge variant="secondary" className="px-3 py-1 rounded-full font-medium bg-amber-200 text-amber-800">
-                  🚨 Alert
-                </Badge>
+                <Badge variant="destructive">Action Needed</Badge>
               </div>
             )}
           </div>
         </CardContent>
       </Card>
-
-      {/* Recent Activity Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="floating-card border-none">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="icon-container">
-                <TrendingUp className="h-5 w-5 text-blue-600" />
-              </div>
-              <span className="text-gradient">Weekly Progress</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {screenTime.weekly.map((time, index) => {
-                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                const hours = Math.floor(time / 60);
-                const minutes = Math.floor(time % 60);
-                const isToday = index === new Date().getDay();
-                const percentage = Math.min((time / 480) * 100, 100);
-                
-                return (
-                  <div key={index} className={`flex items-center justify-between p-3 rounded-xl transition-all duration-300 ${isToday ? 'pro-card' : 'hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
-                    <span className={`text-sm font-medium ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}>
-                      {dayNames[index]} {isToday && '(Today)'}
-                    </span>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-1000"
-                          style={{ width: `${percentage}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold w-16 text-right">
-                        {hours}h{minutes > 0 ? ` ${minutes}m` : ''}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="floating-card border-none">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="icon-container-success">
-                <Shield className="h-5 w-5 text-emerald-600" />
-              </div>
-              <span className="text-gradient-emerald">Health Insights</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {healthLogs.length > 0 ? (
-                <>
-                  <div className="flex items-center justify-between p-3 pro-card rounded-xl">
-                    <span className="text-sm font-medium">Recent symptoms</span>
-                    <Badge variant="outline" className="px-3 py-1 rounded-full">
-                      📊 {healthLogs.length} entries
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-3 pro-card rounded-xl">
-                    <span className="text-sm font-medium">Average severity</span>
-                    <Badge variant={healthLogs[0]?.severity > 3 ? "destructive" : "outline"} className="px-3 py-1 rounded-full">
-                      {healthLogs.length > 0 ? `${(healthLogs.slice(0, 5).reduce((sum, log) => sum + log.severity, 0) / Math.min(5, healthLogs.length)).toFixed(1)}/5` : 'N/A'}
-                    </Badge>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8 pro-card rounded-xl">
-                  <div className="icon-container mx-auto mb-4">
-                    <Heart className="h-8 w-8 text-gray-400" />
-                  </div>
-                  <p className="text-lg font-medium text-gray-600 dark:text-gray-400">No health data yet</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Start logging your symptoms to see insights</p>
-                </div>
-              )}
-              
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between p-3 pro-card rounded-xl">
-                  <span className="text-sm font-medium">Next checkup</span>
-                  <Badge variant={checkupDays !== null && checkupDays <= 30 ? "default" : "outline"} className="px-3 py-1 rounded-full">
-                    {nextCheckupDate ? new Date(nextCheckupDate).toLocaleDateString() : '📅 Not scheduled'}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 };
