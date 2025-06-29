@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import NavigationHeader from "@/components/NavigationHeader";
 import Dashboard from "@/components/Dashboard";
@@ -44,21 +45,26 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showSettings, setShowSettings] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const { hasCompletedOnboarding } = useEyeCare();
+  const { onboardingCompleted, setOnboardingComplete } = useEyeCare();
 
   useEffect(() => {
     // Check if onboarding is completed on mount
-    if (!hasCompletedOnboarding) {
+    if (!onboardingCompleted) {
       setShowOnboarding(true);
     }
-  }, [hasCompletedOnboarding]);
+  }, [onboardingCompleted]);
 
   const handleCloseOnboarding = () => {
     setShowOnboarding(false);
   };
 
-  if (!hasCompletedOnboarding) {
-    return <OnboardingWizard />;
+  const handleOnboardingComplete = (data: any) => {
+    setOnboardingComplete(data);
+    setShowOnboarding(false);
+  };
+
+  if (!onboardingCompleted) {
+    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
   }
 
   return (
