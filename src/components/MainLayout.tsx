@@ -1,38 +1,34 @@
 
-import React from 'react';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import AppSidebar from './AppSidebar';
-import NavigationHeader from './NavigationHeader';
+import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import AppSidebar from '@/components/AppSidebar';
+import NavigationHeader from '@/components/NavigationHeader';
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
+const MainLayout: React.FC = () => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-blue-50/50 via-white to-green-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20">
-        <AppSidebar />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/20">
+      <AppSidebar 
+        isCollapsed={sidebarCollapsed} 
+        onToggle={toggleSidebar}
+      />
+      
+      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-80'}`}>
+        <NavigationHeader 
+          onToggleSidebar={toggleSidebar}
+          sidebarCollapsed={sidebarCollapsed}
+        />
         
-        <div className="flex-1 flex flex-col">
-          <NavigationHeader />
-          
-          <main className="flex-1 p-6 overflow-auto">
-            <div className="max-w-7xl mx-auto">
-              {children}
-            </div>
-          </main>
-          
-          <footer className="border-t border-border/50 bg-card/50 backdrop-blur-sm p-4">
-            <div className="max-w-7xl mx-auto text-center">
-              <p className="text-sm text-muted-foreground">
-                VisionCare © 2024 - Professional Eye Health Management System
-              </p>
-            </div>
-          </footer>
-        </div>
+        <main className="p-8 min-h-[calc(100vh-80px)]">
+          <Outlet />
+        </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 

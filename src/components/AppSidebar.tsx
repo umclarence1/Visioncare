@@ -1,222 +1,247 @@
 
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useEyeCare } from '@/contexts/EyeCareContext';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarHeader,
-  SidebarFooter,
-  useSidebar,
-} from '@/components/ui/sidebar';
-import {
-  Home,
-  BarChart3,
-  Activity,
-  Heart,
-  BookOpen,
+import { 
+  Home, 
+  Brain, 
+  BarChart3, 
+  Activity, 
+  Heart, 
+  Mic, 
+  Trophy, 
+  BookOpen, 
   Settings,
   Calendar,
   Eye,
-  Timer,
-  AlertCircle,
-  User
+  Users,
+  Shield,
+  Bell,
+  HelpCircle
 } from 'lucide-react';
-import Logo from './Logo';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useEyeCare } from '@/contexts/EyeCareContext';
+import Logo from '@/components/Logo';
 
-const navigationItems = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: Home,
-    path: '/',
-    description: 'Overview & insights'
-  },
-  {
-    id: 'monitoring',
-    label: 'Screen Monitor',
-    icon: BarChart3,
-    path: '/monitoring',
-    description: 'Track usage & breaks'
-  },
-  {
-    id: 'exercises',
-    label: 'Eye Exercises',
-    icon: Activity,
-    path: '/exercises',
-    description: 'Strengthen your vision'
-  },
-  {
-    id: 'health',
-    label: 'Health Log',
-    icon: Heart,
-    path: '/health',
-    description: 'Symptoms & checkups'
-  },
-  {
-    id: 'education',
-    label: 'Learn & Tips',
-    icon: BookOpen,
-    path: '/education',
-    description: 'Eye care knowledge'
-  },
-  {
-    id: 'profile',
-    label: 'Profile',
-    icon: User,
-    path: '/profile',
-    description: 'Personal settings'
-  }
-];
+interface AppSidebarProps {
+  isCollapsed: boolean;
+  onToggle: () => void;
+}
 
-const AppSidebar: React.FC = () => {
-  const { collapsed } = useSidebar();
+const AppSidebar: React.FC<AppSidebarProps> = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
-  const { screenTime, healthLogs, isExercising, nextCheckupDate } = useEyeCare();
+  const { screenTime, healthLogs, isExercising } = useEyeCare();
+  
+  const navigationItems = [
+    { 
+      id: 'dashboard', 
+      label: 'Dashboard', 
+      icon: Home, 
+      path: '/dashboard',
+      description: 'Overview & insights',
+      badge: null
+    },
+    { 
+      id: 'ai-insights', 
+      label: 'AI Insights', 
+      icon: Brain, 
+      path: '/ai-insights',
+      description: 'Smart recommendations',
+      badge: 'AI'
+    },
+    { 
+      id: 'monitoring', 
+      label: 'Analytics', 
+      icon: BarChart3, 
+      path: '/monitoring',
+      description: 'Screen time tracking',
+      badge: Math.floor(screenTime.daily / 60) > 4 ? 'Alert' : null
+    },
+    { 
+      id: 'exercises', 
+      label: 'Exercises', 
+      icon: Activity, 
+      path: '/exercises',
+      description: 'Eye workouts',
+      badge: isExercising ? 'Active' : null
+    },
+    { 
+      id: 'health', 
+      label: 'Health Log', 
+      icon: Heart, 
+      path: '/health',
+      description: 'Symptom tracking',
+      badge: healthLogs.length > 0 ? healthLogs.length.toString() : null
+    },
+    { 
+      id: 'appointments', 
+      label: 'Appointments', 
+      icon: Calendar, 
+      path: '/appointments',
+      description: 'Schedule checkups',
+      badge: null
+    },
+    { 
+      id: 'voice', 
+      label: 'Voice AI', 
+      icon: Mic, 
+      path: '/voice',
+      description: 'Voice commands',
+      badge: 'Beta'
+    },
+    { 
+      id: 'community', 
+      label: 'Community', 
+      icon: Users, 
+      path: '/community',
+      description: 'Connect with others',
+      badge: null
+    },
+    { 
+      id: 'achievements', 
+      label: 'Achievements', 
+      icon: Trophy, 
+      path: '/achievements',
+      description: 'Progress & rewards',
+      badge: null
+    },
+    { 
+      id: 'education', 
+      label: 'Learn', 
+      icon: BookOpen, 
+      path: '/education',
+      description: 'Tips & guides',
+      badge: null
+    }
+  ];
 
-  const getNavClassName = (path: string) => {
-    const isActive = location.pathname === path;
-    return `flex items-center w-full transition-all duration-200 ${
-      isActive
-        ? 'bg-primary text-primary-foreground shadow-md'
-        : 'hover:bg-accent hover:text-accent-foreground'
-    }`;
-  };
+  const bottomItems = [
+    { id: 'help', label: 'Help & Support', icon: HelpCircle, path: '/help' },
+    { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' }
+  ];
 
-  const hasHealthAlerts = screenTime.daily > 300 || healthLogs.some(log => 
-    log.severity > 3 && new Date(log.date).toDateString() === new Date().toDateString()
-  );
-
-  const getDaysUntilCheckup = () => {
-    if (!nextCheckupDate) return null;
-    const days = Math.ceil((new Date(nextCheckupDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    return days;
-  };
-
-  const checkupDays = getDaysUntilCheckup();
+  const isActive = (path: string) => location.pathname === path || location.pathname === path.replace('/', '');
 
   return (
-    <Sidebar className="border-r border-border/50 bg-card/95 backdrop-blur-xl">
-      <SidebarHeader className="p-4 border-b border-border/50">
-        <div className={`flex items-center transition-all duration-300 ${collapsed ? 'justify-center' : 'justify-start'}`}>
-          <Logo />
+    <aside 
+      className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-xl z-50 transition-all duration-300 ease-in-out ${
+        isCollapsed ? 'w-20' : 'w-80'
+      }`}
+    >
+      {/* Header */}
+      <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-between">
+          {!isCollapsed && <Logo />}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggle}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
+          >
+            <Eye className="h-5 w-5" />
+          </Button>
         </div>
-        {!collapsed && (
-          <div className="mt-2 text-xs text-muted-foreground text-center">
-            Professional Eye Care Assistant
-          </div>
-        )}
-      </SidebarHeader>
+      </div>
 
-      <SidebarContent className="p-2">
-        <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? 'sr-only' : ''}>
-            Navigation
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                
-                return (
-                  <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton asChild className="p-0">
-                      <NavLink
-                        to={item.path}
-                        className={getNavClassName(item.path)}
-                      >
-                        <div className="flex items-center w-full p-3">
-                          <Icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'}`} />
-                          {!collapsed && (
-                            <div className="flex-1">
-                              <div className="font-medium">{item.label}</div>
-                              <div className="text-xs opacity-70">{item.description}</div>
-                            </div>
-                          )}
-                          {!collapsed && item.id === 'health' && hasHealthAlerts && (
-                            <AlertCircle className="h-4 w-4 text-red-500" />
-                          )}
-                          {!collapsed && item.id === 'exercises' && isExercising && (
-                            <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
-                          )}
-                        </div>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {!collapsed && (
-          <SidebarGroup className="mt-4">
-            <SidebarGroupLabel>Quick Stats</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <div className="space-y-2 p-2">
-                <div className="flex items-center justify-between p-2 bg-background/50 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <Timer className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Today</span>
-                  </div>
-                  <Badge variant="outline" className="text-xs">
-                    {Math.floor(screenTime.daily / 60)}h {Math.floor(screenTime.daily % 60)}m
-                  </Badge>
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <div className="space-y-1">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.path);
+            
+            return (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={`group flex items-center px-3 py-3 rounded-xl transition-all duration-200 relative ${
+                  active
+                    ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 shadow-sm'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                }`}
+              >
+                <div className={`p-2 rounded-lg transition-colors ${
+                  active ? 'bg-blue-100 dark:bg-blue-900/50' : 'bg-gray-100 dark:bg-gray-800'
+                }`}>
+                  <Icon className="h-5 w-5" />
                 </div>
                 
-                {checkupDays !== null && (
-                  <div className="flex items-center justify-between p-2 bg-background/50 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">Checkup</span>
+                {!isCollapsed && (
+                  <>
+                    <div className="ml-4 flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-sm">{item.label}</span>
+                        {item.badge && (
+                          <Badge 
+                            variant={item.badge === 'Alert' ? 'destructive' : 'secondary'}
+                            className="text-xs"
+                          >
+                            {item.badge}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        {item.description}
+                      </p>
                     </div>
-                    <Badge variant={checkupDays <= 7 ? "destructive" : "outline"} className="text-xs">
-                      {checkupDays <= 0 ? 'Due' : `${checkupDays}d`}
-                    </Badge>
-                  </div>
+                    
+                    {active && (
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-l-full" />
+                    )}
+                  </>
                 )}
-                
-                {isExercising && (
-                  <div className="flex items-center justify-between p-2 bg-primary/10 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <Activity className="h-4 w-4 text-primary animate-pulse" />
-                      <span className="text-sm">Exercise</span>
-                    </div>
-                    <Badge className="text-xs">Active</Badge>
-                  </div>
-                )}
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-      </SidebarContent>
+              </NavLink>
+            );
+          })}
+        </div>
 
-      <SidebarFooter className="p-4 border-t border-border/50">
-        {!collapsed ? (
-          <div className="text-center">
-            <div className="text-xs text-muted-foreground">
-              Protecting your vision since 2024
+        {/* Bottom Navigation */}
+        <div className="pt-6 mt-6 border-t border-gray-200 dark:border-gray-800 space-y-1">
+          {bottomItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.path);
+            
+            return (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={`group flex items-center px-3 py-3 rounded-xl transition-all duration-200 ${
+                  active
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                }`}
+              >
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <Icon className="h-4 w-4" />
+                </div>
+                {!isCollapsed && (
+                  <span className="ml-4 font-medium text-sm">{item.label}</span>
+                )}
+              </NavLink>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Status Indicator */}
+      {!isCollapsed && (
+        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/20 dark:to-blue-950/20 rounded-xl">
+            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg">
+              <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <div className="text-xs text-primary font-medium mt-1">
-              Your eyes deserve the best care
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                Eye Health Score
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                85% - Good
+              </p>
             </div>
           </div>
-        ) : (
-          <div className="flex justify-center">
-            <Eye className="h-5 w-5 text-primary" />
-          </div>
-        )}
-      </SidebarFooter>
-    </Sidebar>
+        </div>
+      )}
+    </aside>
   );
 };
 
