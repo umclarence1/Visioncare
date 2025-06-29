@@ -2,27 +2,27 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Logo from '@/components/Logo';
 import { useEyeCare } from '@/contexts/EyeCareContext';
 import { 
   Timer, 
   Bell, 
+  Menu, 
   Settings, 
   Activity,
   AlertCircle,
   Shield,
-  Zap,
-  User
+  Zap
 } from 'lucide-react';
 
 interface NavigationHeaderProps {
   onOpenSettings?: () => void;
   onToggleSidebar?: () => void;
-  sidebarCollapsed?: boolean;
 }
 
 const NavigationHeader: React.FC<NavigationHeaderProps> = ({ 
   onOpenSettings, 
-  sidebarCollapsed = false
+  onToggleSidebar 
 }) => {
   const { 
     isTracking, 
@@ -39,52 +39,68 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
     requestNotificationPermission();
   };
 
+  // Calculate if there are any alerts
   const hasAlerts = screenTime.daily > 300 || healthLogs.some(log => 
     log.severity > 3 && new Date(log.date).toDateString() === new Date().toDateString()
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
-      <div className="px-8 py-4">
+    <header className="sticky top-0 z-50 backdrop-professional border-b border-white/10 dark:border-white/5">
+      <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          {/* Left Section - Status */}
+          {/* Left Section */}
           <div className="flex items-center space-x-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleSidebar}
+              className="md:hidden p-2 hover:bg-white/10 dark:hover:bg-white/5 rounded-xl transition-all duration-300"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <Logo />
+          </div>
+
+          {/* Center Status Indicators */}
+          <div className="hidden lg:flex items-center space-x-4">
             {isExercising && (
-              <Badge variant="default" className="bg-emerald-500 px-3 py-1">
+              <div className="status-indicator status-active animate-fade-in">
                 <Activity className="h-4 w-4 mr-2 animate-pulse" />
-                Exercise Active
-              </Badge>
+                <span className="font-medium">Exercise Active</span>
+              </div>
             )}
 
             {hasAlerts && (
-              <Badge variant="destructive" className="px-3 py-1">
+              <div className="status-indicator status-warning animate-fade-in">
                 <AlertCircle className="h-4 w-4 mr-2" />
-                Attention Needed
-              </Badge>
+                <span className="font-medium">Attention Needed</span>
+              </div>
             )}
 
-            <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-2xl">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-xl">
-                <Shield className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <div className="flex items-center gap-3 px-4 py-2 pro-card rounded-2xl">
+              <div className="icon-container">
+                <Shield className="h-4 w-4 text-blue-600" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Today's Screen Time</span>
-                <span className="text-sm font-bold text-gray-900 dark:text-white">
+                <span className="text-sm font-bold text-gradient">
                   {Math.floor(screenTime.daily / 60)}h {Math.floor(screenTime.daily % 60)}m
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Right Actions */}
+          {/* Right Action Buttons */}
           <div className="flex items-center space-x-3">
             <Button 
               variant="ghost"
               onClick={handleEnableNotifications}
               size="sm"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/5 transition-all duration-300"
             >
-              <Bell className="h-4 w-4" />
+              <div className="icon-container-warning">
+                <Bell className="h-4 w-4 text-amber-600" />
+              </div>
               <span className="font-medium">Alerts</span>
             </Button>
 
@@ -92,7 +108,7 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
               variant={isTracking ? "destructive" : "default"}
               onClick={isTracking ? stopTracking : startTracking}
               size="sm"
-              className="shadow-lg transition-all duration-300 hover:shadow-xl"
+              className={`btn-innovative ${isTracking ? 'from-red-500 to-red-600' : ''} shadow-lg`}
             >
               <Timer className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline font-semibold">
@@ -107,7 +123,7 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
               variant="outline" 
               onClick={resetDailyStats}
               size="sm"
-              className="hidden sm:flex items-center gap-2 hover:shadow-md transition-all duration-300"
+              className="hidden sm:flex items-center gap-2 pro-card border-none hover:shadow-lg transition-all duration-300"
             >
               <Zap className="h-4 w-4" />
               <span className="font-medium">Reset</span>
@@ -115,17 +131,9 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
 
             <Button
               variant="ghost"
-              size="sm"
-              className="p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              <User className="h-5 w-5" />
-            </Button>
-
-            <Button
-              variant="ghost"
               onClick={onOpenSettings}
               size="sm"
-              className="p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="p-3 rounded-xl hover:bg-white/10 dark:hover:bg-white/5 transition-all duration-300"
             >
               <Settings className="h-5 w-5" />
             </Button>
