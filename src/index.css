@@ -101,7 +101,7 @@
 }
 
 @layer components {
-  /* Advanced Glass Morphism Cards */
+  /* Professional Glass Cards */
   .glass-card {
     @apply bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl;
   }
@@ -110,7 +110,7 @@
     @apply bg-white/20 dark:bg-white/10 backdrop-blur-2xl border border-white/30 dark:border-white/20 shadow-2xl;
   }
   
-  /* Innovative Neuomorphic Cards */
+  /* Elegant Neuomorphic Cards */
   .neuro-card {
     @apply bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-black 
            shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] 
@@ -126,7 +126,7 @@
   
   /* Professional Gradient Cards */
   .pro-card {
-    @apply bg-gradient-to-br from-white via-white to-azure-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/30 
+    @apply bg-gradient-to-br from-white via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/20 
            border border-gray-200/60 dark:border-gray-700/60 shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10;
   }
   
@@ -134,7 +134,7 @@
     @apply transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-[1.02] hover:-translate-y-1;
   }
   
-  /* Innovative Buttons */
+  /* Professional Buttons */
   .btn-innovative {
     @apply relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-size-200 
            text-white font-semibold py-3 px-8 rounded-2xl shadow-lg 
@@ -158,7 +158,7 @@
   }
   
   .btn-voice.recording {
-    @apply animate-pulse bg-gradient-to-r from-red-500 to-pink-500 shadow-red-500/50;
+    @apply bg-gradient-to-r from-red-500 to-pink-500 shadow-red-500/50;
   }
   
   /* AI Insights Panel */
@@ -167,7 +167,7 @@
            border border-purple-200/50 dark:border-purple-700/50 rounded-3xl p-6 shadow-xl shadow-purple-500/10;
   }
   
-  /* Gamification Elements */
+  /* Achievement Elements */
   .achievement-badge {
     @apply inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 
            text-white font-bold py-2 px-4 rounded-full shadow-lg shadow-yellow-500/30 
@@ -179,7 +179,7 @@
            rounded-full w-16 h-16 flex items-center justify-center shadow-lg shadow-emerald-500/30;
   }
   
-  /* Status Indicators */
+  /* Professional Status Indicators */
   .status-indicator {
     @apply relative inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
   }
@@ -201,7 +201,7 @@
     @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
   }
   
-  /* Advanced Progress Bars */
+  /* Professional Progress Bars */
   .progress-innovative {
     @apply h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative;
   }
@@ -216,7 +216,7 @@
     @apply backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-white/10;
   }
   
-  /* Text Gradients */
+  /* Clean Text Gradients */
   .text-gradient {
     @apply bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent;
   }
@@ -287,7 +287,7 @@
   @apply transition-colors duration-300;
 }
 
-/* Advanced Gradient Backgrounds */
+/* Professional Gradient Backgrounds */
 .mesh-bg {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
   background-size: 400% 400%;
@@ -299,29 +299,29 @@
   50% { background-position: 100% 50%; }
 }
 
-/* Floating Animation */
+/* Smooth Floating Animation */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-3px); }
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 
-/* Glow Effect */
+/* Gentle Glow Effect */
 @keyframes glow {
   0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
   50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
 }
 
 .animate-glow {
-  animation: glow 2s ease-in-out infinite;
+  animation: glow 4s ease-in-out infinite;
 }
 
-/* Fade In Animation */
+/* Professional Fade In Animation */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -329,13 +329,12 @@
   animation: fadeIn 0.6s ease-out;
 }
 
-/* Smooth breathing effect instead of shaky animations */
+/* Gentle Scale Animation */
 @keyframes breathe {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  50% { transform: scale(1.01); }
 }
 
 .animate-breathe {
-  animation: breathe 4s ease-in-out infinite;
+  animation: breathe 8s ease-in-out infinite;
 }
-
