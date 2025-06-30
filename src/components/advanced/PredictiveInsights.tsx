@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import {
   AlertTriangle, 
   Lightbulb, 
   Target,
-  Refresh,
+  RefreshCw,
   Clock,
   BarChart3
 } from 'lucide-react';
@@ -85,7 +84,7 @@ const PredictiveInsights: React.FC = () => {
             <span className="text-gradient-ai">Predictive Health Insights</span>
           </CardTitle>
           <Button onClick={regenerateInsights} size="sm" variant="outline">
-            <Refresh className="h-4 w-4" />
+            <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
