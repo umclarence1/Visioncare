@@ -141,6 +141,42 @@ const AIInsights = () => {
 
   return (
     <div className={`space-y-6 transition-opacity duration-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+      {/* AI Hero Section */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 p-6 lg:p-8">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+          <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-400/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="space-y-4 animate-slide-up">
+            <div className="glass-badge">
+              <Brain className="w-4 h-4 animate-pulse" />
+              <span className="text-sm font-medium">AI-Powered Analysis</span>
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+              Your Personalized <span className="text-white/80">Insights</span>
+            </h1>
+            <p className="text-white/70 max-w-lg">
+              Our AI analyzes your screen time patterns, health logs, and behavior to provide smart recommendations for better eye health.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 animate-scale-in delay-200">
+            <div className="text-center p-4 rounded-2xl bg-white/10 backdrop-blur-sm">
+              <div className="text-3xl font-bold text-white tabular-nums">{Math.floor(screenTime.weekly.reduce((a, b) => a + b, 0) / 60)}h</div>
+              <div className="text-sm text-white/70">Weekly Screen Time</div>
+            </div>
+            <div className="text-center p-4 rounded-2xl bg-white/10 backdrop-blur-sm">
+              <div className="text-3xl font-bold text-white tabular-nums">{healthLogs.length}</div>
+              <div className="text-sm text-white/70">Health Logs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* AI Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <InsightCard
@@ -296,7 +332,7 @@ const AIInsights = () => {
   );
 };
 
-// Insight Card Component
+// Insight Card Component - Premium Design
 const InsightCard = ({
   icon,
   title,
@@ -318,22 +354,30 @@ const InsightCard = ({
     amber: 'icon-wrapper-amber'
   };
 
+  const glowColors = {
+    blue: 'group-hover:shadow-blue-500/20',
+    emerald: 'group-hover:shadow-emerald-500/20',
+    amber: 'group-hover:shadow-amber-500/20'
+  };
+
   return (
-    <div className="card-elevated p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div className={`icon-wrapper ${iconWrapperClass[color]}`}>
+    <div className={`card-elevated p-5 group hover-lift ${glowColors[color]}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div className={`icon-wrapper ${iconWrapperClass[color]} group-hover:scale-110 transition-transform`}>
           {icon}
         </div>
         {trend !== 'neutral' && (
-          <div className={`flex items-center gap-1 text-sm font-medium ${
-            trend === 'up' ? 'text-emerald-600' : 'text-red-600'
+          <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium ${
+            trend === 'up'
+              ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
+              : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
           }`}>
             {trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
           </div>
         )}
       </div>
-      <p className="text-xs text-neutral-500 mb-1">{title}</p>
-      <p className="text-xl font-bold text-neutral-900 dark:text-white">{value}</p>
+      <p className="text-xs text-neutral-500 mb-1 font-medium">{title}</p>
+      <p className="text-2xl font-bold text-neutral-900 dark:text-white">{value}</p>
       <p className="text-xs text-neutral-400 mt-1">{subtitle}</p>
     </div>
   );

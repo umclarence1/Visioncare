@@ -70,35 +70,38 @@ const DailyHealthLog = () => {
   };
 
   return (
-    <div className="card-elevated p-5">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <div className="icon-wrapper icon-wrapper-red">
-            <Heart className="w-4 h-4" />
+    <div className="card-elevated p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/25">
+            <Heart className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-neutral-900 dark:text-white">Health Log</h3>
-            <p className="text-xs text-neutral-500">Track your symptoms</p>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Health Log</h3>
+            <p className="text-sm text-neutral-500">Track your symptoms</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-neutral-400" />
-          <span className="text-sm text-neutral-500">{new Date().toLocaleDateString()}</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800">
+          <Calendar className="w-4 h-4 text-neutral-500" />
+          <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{new Date().toLocaleDateString()}</span>
         </div>
       </div>
 
       {!showAddForm ? (
         <div className="space-y-5">
-          {/* Add Entry Button */}
+          {/* Add Entry Button - Premium Design */}
           <button
             onClick={() => setShowAddForm(true)}
-            className="w-full p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-red-300 dark:hover:border-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors group"
+            className="w-full p-5 rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-red-400 dark:hover:border-red-600 hover:bg-gradient-to-br hover:from-red-50 hover:to-rose-50 dark:hover:from-red-950/20 dark:hover:to-rose-950/20 transition-all duration-300 group"
           >
-            <div className="flex items-center justify-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <div className="flex items-center justify-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg shadow-red-500/25">
+                <Plus className="w-6 h-6 text-white" />
               </div>
-              <span className="font-medium text-neutral-700 dark:text-neutral-300">Log Today's Symptoms</span>
+              <div className="text-left">
+                <span className="block font-semibold text-neutral-900 dark:text-white">Log Today's Symptoms</span>
+                <span className="text-sm text-neutral-500">Track how your eyes feel</span>
+              </div>
             </div>
           </button>
 
@@ -176,12 +179,12 @@ const DailyHealthLog = () => {
           )}
 
           {healthLogs.length === 0 && (
-            <div className="text-center py-6">
-              <div className="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto mb-3">
-                <Heart className="w-6 h-6 text-neutral-400" />
+            <div className="text-center py-8">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700 flex items-center justify-center mx-auto mb-4">
+                <Heart className="w-8 h-8 text-neutral-400" />
               </div>
-              <p className="text-neutral-500 text-sm">No health logs yet</p>
-              <p className="text-xs text-neutral-400 mt-1">Start tracking your symptoms today</p>
+              <p className="font-semibold text-neutral-700 dark:text-neutral-300">No health logs yet</p>
+              <p className="text-sm text-neutral-500 mt-1">Start tracking your symptoms today</p>
             </div>
           )}
         </div>

@@ -120,80 +120,102 @@ const Dashboard = () => {
 
   return (
     <div className={`space-y-6 transition-opacity duration-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
-      {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-6 lg:p-8 text-white">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-white/5 rounded-full blur-3xl" />
+      {/* Hero Section - Premium Design */}
+      <div className="hero-card-teal">
+        {/* Animated Background Orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="orb orb-purple w-64 h-64 -top-20 -right-20" style={{ animationDelay: '0s' }} />
+          <div className="orb orb-pink w-48 h-48 bottom-0 left-1/4" style={{ animationDelay: '2s' }} />
+          <div className="orb orb-teal w-32 h-32 top-1/2 right-1/3" style={{ animationDelay: '4s' }} />
         </div>
 
-        <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
           {/* Left: Greeting & Stats */}
-          <div className="space-y-4">
+          <div className="space-y-5 animate-slide-up">
             <div>
-              <p className="text-white/70 text-sm font-medium mb-1">
-                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              <div className="glass-badge mb-3">
+                <Sparkles className="w-4 h-4 animate-sparkle" />
+                <span className="text-sm font-medium">
+                  {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                </span>
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-bold tracking-tight">{greeting}</h1>
+              <p className="text-white/80 mt-2 text-lg">
+                Your eyes are in <span className="font-semibold text-white">{scoreStatus.label.toLowerCase()}</span> condition
               </p>
-              <h1 className="text-3xl lg:text-4xl font-bold">{greeting}</h1>
-              <p className="text-white/80 mt-1">Your eyes are in {scoreStatus.label.toLowerCase()} condition</p>
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2">
-                <Clock className="w-4 h-4" />
+              <div className="glass-badge px-4 py-2.5 hover:bg-white/20 transition-colors cursor-pointer">
+                <Clock className="w-5 h-5" />
                 <div>
                   <p className="text-xs text-white/70">Screen Time</p>
-                  <p className="text-sm font-semibold tabular-nums">
+                  <p className="text-sm font-bold tabular-nums">
                     {Math.floor(screenTime.daily / 60)}h {Math.floor(screenTime.daily % 60)}m
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2">
-                <Timer className="w-4 h-4" />
+              <div className="glass-badge px-4 py-2.5 hover:bg-white/20 transition-colors cursor-pointer">
+                <Timer className="w-5 h-5" />
                 <div>
                   <p className="text-xs text-white/70">Next Break</p>
-                  <p className="text-sm font-semibold">{getNextBreakTime()}</p>
+                  <p className="text-sm font-bold">{getNextBreakTime()}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2">
-                <Activity className="w-4 h-4" />
+              <div className="glass-badge px-4 py-2.5 hover:bg-white/20 transition-colors cursor-pointer">
+                <Activity className="w-5 h-5" />
                 <div>
-                  <p className="text-xs text-white/70">Exercises</p>
-                  <p className="text-sm font-semibold">{isExercising ? 'Active' : '0 Today'}</p>
+                  <p className="text-xs text-white/70">Status</p>
+                  <p className="text-sm font-bold">{isExercising ? 'Exercising' : 'Tracking'}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right: Health Score Ring */}
-          <div className="flex justify-center lg:justify-end">
+          {/* Right: Health Score Ring - Enhanced */}
+          <div className="flex justify-center lg:justify-end animate-scale-in delay-200">
             <div className="relative">
-              <svg className="w-36 h-36 transform -rotate-90" viewBox="0 0 160 160">
+              {/* Outer glow ring */}
+              <div className="absolute inset-0 rounded-full ring-pulse-animation"
+                   style={{ boxShadow: '0 0 40px rgba(255,255,255,0.3)' }} />
+
+              <svg className="w-44 h-44 transform -rotate-90" viewBox="0 0 180 180">
+                {/* Background circle */}
                 <circle
-                  cx="80"
-                  cy="80"
-                  r="70"
-                  stroke="rgba(255,255,255,0.2)"
-                  strokeWidth="10"
+                  cx="90"
+                  cy="90"
+                  r="80"
+                  stroke="rgba(255,255,255,0.15)"
+                  strokeWidth="12"
                   fill="none"
                 />
+                {/* Animated progress circle */}
                 <circle
-                  cx="80"
-                  cy="80"
-                  r="70"
-                  stroke="white"
-                  strokeWidth="10"
+                  cx="90"
+                  cy="90"
+                  r="80"
+                  stroke="url(#scoreGradient)"
+                  strokeWidth="12"
                   fill="none"
                   strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 70}`}
-                  strokeDashoffset={`${2 * Math.PI * 70 * (1 - animatedScore / 100)}`}
-                  className="transition-all duration-1000 ease-out"
+                  strokeDasharray={`${2 * Math.PI * 80}`}
+                  strokeDashoffset={`${2 * Math.PI * 80 * (1 - animatedScore / 100)}`}
+                  className="transition-all duration-1500 ease-out"
+                  style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.5))' }}
                 />
+                <defs>
+                  <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#fff" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0.8)" />
+                  </linearGradient>
+                </defs>
               </svg>
+
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-bold tabular-nums">{animatedScore}</span>
-                <span className="text-xs text-white/70">Health Score</span>
+                <span className="text-5xl font-bold tabular-nums animate-count">{animatedScore}</span>
+                <span className="text-sm text-white/80 font-medium">Health Score</span>
               </div>
             </div>
           </div>
@@ -236,20 +258,27 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Active Exercise Banner */}
+      {/* Active Exercise Banner - Premium Design */}
       {isExercising && currentExercise && (
-        <div className="rounded-xl bg-emerald-500 p-4 text-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                <Activity className="w-5 h-5" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 p-5 text-white breathing-glow">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+            <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+          </div>
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                <Activity className="w-7 h-7 animate-pulse" />
               </div>
               <div>
-                <p className="text-sm text-white/80">Exercise in Progress</p>
-                <p className="text-lg font-semibold">{currentExercise.name}</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <p className="text-sm text-white/80 font-medium">Exercise in Progress</p>
+                </div>
+                <p className="text-xl font-bold">{currentExercise.name}</p>
               </div>
             </div>
-            <button className="px-4 py-2 rounded-lg bg-white text-emerald-600 font-medium text-sm hover:bg-white/90 transition-colors">
+            <button className="px-5 py-2.5 rounded-xl bg-white text-emerald-600 font-semibold text-sm hover:bg-white/90 transition-all hover:scale-105 shadow-lg">
               View Progress
             </button>
           </div>
@@ -398,21 +427,29 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Insights Banner */}
-      <div className="card-elevated p-5 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+      {/* AI Insights Banner - Premium Design */}
+      <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-1/2 -right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-1/2 -left-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+        </div>
+        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <Brain className="w-7 h-7 text-white animate-pulse" />
             </div>
             <div>
-              <h3 className="font-semibold text-neutral-900 dark:text-white">AI-Powered Insights</h3>
-              <p className="text-sm text-neutral-500">Get personalized recommendations</p>
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="w-4 h-4 text-white/80 animate-sparkle" />
+                <span className="text-white/80 text-sm font-medium">Powered by AI</span>
+              </div>
+              <h3 className="text-xl font-bold text-white">Personalized Health Insights</h3>
+              <p className="text-white/70 text-sm">Get smart recommendations based on your habits</p>
             </div>
           </div>
-          <button className="btn-accent whitespace-nowrap">
+          <button className="px-6 py-3 rounded-xl bg-white text-purple-600 font-semibold flex items-center gap-2 hover:bg-white/90 transition-all hover:scale-105 shadow-lg whitespace-nowrap">
             View Insights
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -420,7 +457,7 @@ const Dashboard = () => {
   );
 };
 
-// Stat Card Component
+// Stat Card Component - Premium Design
 const StatCard = ({
   icon,
   label,
@@ -443,10 +480,17 @@ const StatCard = ({
     purple: 'icon-wrapper-purple'
   };
 
+  const glowColors = {
+    blue: 'group-hover:shadow-blue-500/20',
+    emerald: 'group-hover:shadow-emerald-500/20',
+    amber: 'group-hover:shadow-amber-500/20',
+    purple: 'group-hover:shadow-purple-500/20'
+  };
+
   return (
-    <div className="card-elevated p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div className={`icon-wrapper ${iconWrapperClass[color]}`}>
+    <div className={`card-elevated p-5 group hover-lift ${glowColors[color]}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div className={`icon-wrapper ${iconWrapperClass[color]} group-hover:scale-110 transition-transform`}>
           {icon}
         </div>
         <div className={`metric-trend ${trend === 'up' ? 'metric-trend-up' : 'metric-trend-down'}`}>
@@ -454,13 +498,13 @@ const StatCard = ({
           <span>{trendValue}</span>
         </div>
       </div>
-      <p className="metric-value text-2xl">{value}</p>
+      <p className="metric-value text-3xl">{value}</p>
       <p className="metric-label mt-1">{label}</p>
     </div>
   );
 };
 
-// Quick Action Component
+// Quick Action Component - Premium Design
 const QuickAction = ({
   icon,
   title,
@@ -473,23 +517,32 @@ const QuickAction = ({
   color: 'emerald' | 'red' | 'purple' | 'blue';
 }) => {
   const bgColors = {
-    emerald: 'bg-emerald-500',
-    red: 'bg-red-500',
-    purple: 'bg-purple-500',
-    blue: 'bg-blue-500'
+    emerald: 'bg-gradient-to-br from-emerald-400 to-emerald-600',
+    red: 'bg-gradient-to-br from-red-400 to-red-600',
+    purple: 'bg-gradient-to-br from-purple-400 to-purple-600',
+    blue: 'bg-gradient-to-br from-blue-400 to-blue-600'
+  };
+
+  const shadowColors = {
+    emerald: 'group-hover:shadow-emerald-500/30',
+    red: 'group-hover:shadow-red-500/30',
+    purple: 'group-hover:shadow-purple-500/30',
+    blue: 'group-hover:shadow-blue-500/30'
   };
 
   return (
-    <button className="card-elevated p-4 text-left group hover:scale-[1.02] transition-transform">
-      <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-xl ${bgColors[color]} flex items-center justify-center text-white`}>
+    <button className={`card-elevated p-5 text-left group hover-lift ${shadowColors[color]}`}>
+      <div className="flex items-center gap-4">
+        <div className={`w-12 h-12 rounded-xl ${bgColors[color]} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-neutral-900 dark:text-white">{title}</p>
+          <p className="font-semibold text-neutral-900 dark:text-white">{title}</p>
           <p className="text-sm text-neutral-500 truncate">{description}</p>
         </div>
-        <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 group-hover:translate-x-1 transition-all" />
+        <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center group-hover:bg-neutral-200 dark:group-hover:bg-neutral-700 transition-colors">
+          <ChevronRight className="w-4 h-4 text-neutral-500 group-hover:text-neutral-700 dark:group-hover:text-neutral-300 group-hover:translate-x-0.5 transition-all" />
+        </div>
       </div>
     </button>
   );

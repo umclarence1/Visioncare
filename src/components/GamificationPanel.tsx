@@ -156,51 +156,63 @@ const GamificationPanel = () => {
 
   return (
     <div className={`space-y-6 transition-opacity duration-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
-      {/* Level & XP Card */}
-      <div className="card-elevated p-5 overflow-hidden">
-        <div className="relative">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-            {/* Level Badge */}
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-white">{userLevel}</span>
-                </div>
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center">
-                  <Crown className="w-3 h-3 text-white" />
-                </div>
+      {/* Hero Level Card - Premium Design */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-600 p-6 lg:p-8">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+          <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-pink-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }} />
+          <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          {/* Left: Level Info */}
+          <div className="flex items-center gap-5 animate-slide-up">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-lg">
+                <span className="text-4xl font-bold text-white">{userLevel}</span>
               </div>
-              <div>
-                <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Level {userLevel}</h2>
-                <p className="text-sm text-neutral-500">Eye Care Champion</p>
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce" style={{ animationDuration: '2s' }}>
+                <Crown className="w-4 h-4 text-white" />
               </div>
             </div>
-
-            {/* XP Display */}
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <div className="flex items-center gap-2 justify-end mb-1">
-                  <Zap className="w-5 h-5 text-amber-500" />
-                  <span className="text-2xl font-bold text-neutral-900 dark:text-white tabular-nums">{animatedXP}</span>
-                  <span className="text-neutral-500">XP</span>
-                </div>
-                <p className="text-sm text-neutral-500">{nextLevelXp - xp} XP to next level</p>
+            <div>
+              <div className="glass-badge mb-2">
+                <Sparkles className="w-4 h-4 animate-sparkle" />
+                <span className="text-sm font-medium">Champion</span>
               </div>
+              <h2 className="text-2xl lg:text-3xl font-bold text-white">Level {userLevel}</h2>
+              <p className="text-white/70">Eye Care Master</p>
             </div>
           </div>
 
-          {/* Progress Bar */}
-          <div className="mt-5">
-            <div className="flex justify-between text-sm text-neutral-500 mb-2">
-              <span>Progress to Level {userLevel + 1}</span>
-              <span className="tabular-nums">{Math.round(xpProgress)}%</span>
+          {/* Right: XP Display */}
+          <div className="flex items-center gap-4 animate-scale-in delay-200">
+            <div className="text-center p-4 rounded-2xl bg-white/10 backdrop-blur-sm">
+              <div className="flex items-center gap-2 justify-center mb-1">
+                <Zap className="w-6 h-6 text-amber-400 animate-pulse" />
+                <span className="text-3xl font-bold text-white tabular-nums">{animatedXP}</span>
+              </div>
+              <p className="text-sm text-white/70">Total XP</p>
             </div>
-            <div className="h-3 rounded-full bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-1000"
-                style={{ width: `${xpProgress}%` }}
-              />
+            <div className="text-center p-4 rounded-2xl bg-white/10 backdrop-blur-sm">
+              <div className="text-3xl font-bold text-white tabular-nums">{nextLevelXp - xp}</div>
+              <p className="text-sm text-white/70">XP to Level Up</p>
             </div>
+          </div>
+        </div>
+
+        {/* Progress Bar - Glass Style */}
+        <div className="relative mt-6">
+          <div className="flex justify-between text-sm text-white/70 mb-2">
+            <span className="font-medium">Progress to Level {userLevel + 1}</span>
+            <span className="tabular-nums font-bold">{Math.round(xpProgress)}%</span>
+          </div>
+          <div className="h-4 rounded-full bg-white/15 overflow-hidden backdrop-blur-sm">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-white to-white/80 transition-all duration-1000"
+              style={{ width: `${xpProgress}%`, boxShadow: '0 0 20px rgba(255,255,255,0.4)' }}
+            />
           </div>
         </div>
       </div>
@@ -286,17 +298,26 @@ const GamificationPanel = () => {
         )}
       </div>
 
-      {/* Motivation Banner */}
-      <div className="p-5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-            <Sparkles className="w-6 h-6" />
+      {/* Motivation Banner - Premium Design */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-5">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+        </div>
+        <div className="relative flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            <Sparkles className="w-7 h-7 text-white animate-sparkle" />
           </div>
-          <div>
-            <h4 className="font-semibold mb-0.5">Keep Going!</h4>
+          <div className="flex-1">
+            <h4 className="text-lg font-bold text-white mb-1">Keep Going!</h4>
             <p className="text-white/80 text-sm">
-              You're on a {streakDays}-day streak! Complete more exercises and log symptoms to level up faster.
+              You're on a <span className="font-bold text-white">{streakDays}-day streak</span>! Complete more exercises and log symptoms to level up faster.
             </p>
+          </div>
+          <div className="hidden md:flex items-center gap-2">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <Flame className="w-5 h-5 text-white animate-pulse" />
+            </div>
           </div>
         </div>
       </div>
@@ -304,7 +325,7 @@ const GamificationPanel = () => {
   );
 };
 
-// Stat Box Component
+// Stat Box Component - Premium Design
 const StatBox = ({
   icon,
   value,
@@ -323,12 +344,19 @@ const StatBox = ({
     blue: 'icon-wrapper-blue'
   };
 
+  const glowColors = {
+    amber: 'group-hover:shadow-amber-500/20',
+    purple: 'group-hover:shadow-purple-500/20',
+    emerald: 'group-hover:shadow-emerald-500/20',
+    blue: 'group-hover:shadow-blue-500/20'
+  };
+
   return (
-    <div className="card-elevated p-4">
-      <div className={`icon-wrapper ${iconWrapperClass[color]} mb-3`}>
+    <div className={`card-elevated p-5 group hover-lift ${glowColors[color]}`}>
+      <div className={`icon-wrapper ${iconWrapperClass[color]} mb-3 group-hover:scale-110 transition-transform`}>
         {icon}
       </div>
-      <p className="text-xl font-bold text-neutral-900 dark:text-white tabular-nums">{value}</p>
+      <p className="text-2xl font-bold text-neutral-900 dark:text-white tabular-nums">{value}</p>
       <p className="text-sm text-neutral-500">{label}</p>
     </div>
   );

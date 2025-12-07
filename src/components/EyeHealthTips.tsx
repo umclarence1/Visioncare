@@ -137,19 +137,19 @@ const EyeHealthTips = () => {
   };
 
   return (
-    <div className="card-elevated p-5">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <div className="icon-wrapper icon-wrapper-amber">
-            <Lightbulb className="w-4 h-4" />
+    <div className="card-elevated p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/25">
+            <Lightbulb className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-neutral-900 dark:text-white">Health Tips</h3>
-            <p className="text-xs text-neutral-500">Personalized for you</p>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Health Tips</h3>
+            <p className="text-sm text-neutral-500">Personalized for you</p>
           </div>
         </div>
         {relevantTips.length > 0 && (
-          <span className="tag tag-blue">
+          <span className="px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm font-semibold">
             {relevantTips.length} tip{relevantTips.length > 1 ? 's' : ''}
           </span>
         )}
@@ -157,10 +157,10 @@ const EyeHealthTips = () => {
 
       {relevantTips.length === 0 ? (
         <div className="text-center py-8">
-          <div className="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-3">
-            <Sparkles className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="text-neutral-700 dark:text-neutral-300 font-medium">You're doing great!</p>
+          <p className="text-lg font-semibold text-neutral-900 dark:text-white">You're doing great!</p>
           <p className="text-sm text-neutral-500 mt-1">No specific tips needed right now</p>
         </div>
       ) : (
