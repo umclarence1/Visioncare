@@ -1,20 +1,19 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from 'react';
 import { useEyeCare } from '@/contexts/EyeCareContext';
-import { 
-  Trophy, 
-  Target, 
-  Flame, 
+import {
+  Trophy,
+  Target,
+  Flame,
   Star,
   Award,
   Zap,
   Crown,
   Medal,
   Gift,
-  TrendingUp
+  TrendingUp,
+  Lock,
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 interface Achievement {
@@ -26,13 +25,19 @@ interface Achievement {
   progress: number;
   maxProgress: number;
   reward: string;
+  color: string;
 }
 
-const GamificationPanel: React.FC = () => {
+const GamificationPanel = () => {
   const { screenTime, healthLogs, exerciseHistory } = useEyeCare();
+  const [mounted, setMounted] = useState(false);
+  const [animatedXP, setAnimatedXP] = useState(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const calculateStreakDays = (): number => {
-    // Simplified streak calculation
     return Math.min(healthLogs.length + exerciseHistory.length, 30);
   };
 
@@ -49,67 +54,100 @@ const GamificationPanel: React.FC = () => {
   const userLevel = getUserLevel();
   const xp = getExperiencePoints();
   const nextLevelXp = userLevel * 50;
+  const xpProgress = (xp / nextLevelXp) * 100;
+
+  // Animate XP on mount
+  useEffect(() => {
+    if (mounted) {
+      const timer = setTimeout(() => {
+        const duration = 1000;
+        const steps = 30;
+        const increment = xp / steps;
+        let current = 0;
+
+        const interval = setInterval(() => {
+          current += increment;
+          if (current >= xp) {
+            setAnimatedXP(xp);
+            clearInterval(interval);
+          } else {
+            setAnimatedXP(Math.round(current));
+          }
+        }, duration / steps);
+
+        return () => clearInterval(interval);
+      }, 200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [xp, mounted]);
 
   const achievements: Achievement[] = [
     {
       id: 'first-log',
       title: 'Health Tracker',
       description: 'Log your first symptom',
-      icon: <Star className="h-6 w-6 text-yellow-500" />,
+      icon: <Star className="w-5 h-5" />,
       unlocked: healthLogs.length >= 1,
       progress: Math.min(healthLogs.length, 1),
       maxProgress: 1,
-      reward: '+10 XP'
+      reward: '+10 XP',
+      color: 'from-amber-400 to-yellow-500'
     },
     {
       id: 'exercise-starter',
       title: 'Exercise Enthusiast',
       description: 'Complete 5 eye exercises',
-      icon: <Target className="h-6 w-6 text-blue-500" />,
+      icon: <Target className="w-5 h-5" />,
       unlocked: exerciseHistory.length >= 5,
       progress: Math.min(exerciseHistory.length, 5),
       maxProgress: 5,
-      reward: '+50 XP'
+      reward: '+50 XP',
+      color: 'from-blue-400 to-cyan-500'
     },
     {
       id: 'streak-master',
       title: 'Consistency King',
       description: 'Maintain a 7-day streak',
-      icon: <Flame className="h-6 w-6 text-orange-500" />,
+      icon: <Flame className="w-5 h-5" />,
       unlocked: streakDays >= 7,
       progress: Math.min(streakDays, 7),
       maxProgress: 7,
-      reward: '+100 XP'
+      reward: '+100 XP',
+      color: 'from-orange-400 to-red-500'
     },
     {
       id: 'screen-guardian',
-      title: 'Screen Time Guardian',
+      title: 'Screen Guardian',
       description: 'Keep daily screen time under 5 hours',
-      icon: <Award className="h-6 w-6 text-emerald-500" />,
+      icon: <Award className="w-5 h-5" />,
       unlocked: screenTime.daily < 300,
       progress: screenTime.daily < 300 ? 1 : 0,
       maxProgress: 1,
-      reward: '+25 XP'
+      reward: '+25 XP',
+      color: 'from-emerald-400 to-teal-500'
     },
     {
       id: 'health-expert',
-      title: 'Health Data Expert',
+      title: 'Health Expert',
       description: 'Log symptoms for 30 days',
-      icon: <Crown className="h-6 w-6 text-purple-500" />,
+      icon: <Crown className="w-5 h-5" />,
       unlocked: healthLogs.length >= 30,
       progress: Math.min(healthLogs.length, 30),
       maxProgress: 30,
-      reward: '+200 XP'
+      reward: '+200 XP',
+      color: 'from-purple-400 to-pink-500'
     },
     {
       id: 'exercise-master',
       title: 'Exercise Master',
       description: 'Complete 50 eye exercises',
-      icon: <Medal className="h-6 w-6 text-red-500" />,
+      icon: <Medal className="w-5 h-5" />,
       unlocked: exerciseHistory.length >= 50,
       progress: Math.min(exerciseHistory.length, 50),
       maxProgress: 50,
-      reward: '+300 XP'
+      reward: '+300 XP',
+      color: 'from-red-400 to-rose-500'
     }
   ];
 
@@ -117,144 +155,243 @@ const GamificationPanel: React.FC = () => {
   const lockedAchievements = achievements.filter(a => !a.unlocked);
 
   return (
-    <div className="space-y-6">
-      {/* User Level & XP */}
-      <Card className="neuro-card">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-6">
+    <div className={`space-y-6 transition-opacity duration-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Level & XP Card */}
+      <div className="card-elevated p-5 overflow-hidden">
+        <div className="relative">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+            {/* Level Badge */}
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
-                  {userLevel}
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">{userLevel}</span>
                 </div>
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
-                  <Crown className="h-3 w-3 text-white" />
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center">
+                  <Crown className="w-3 h-3 text-white" />
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-gradient">Level {userLevel}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Eye Care Champion</p>
+                <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Level {userLevel}</h2>
+                <p className="text-sm text-neutral-500">Eye Care Champion</p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-5 w-5 text-yellow-500" />
-                <span className="text-xl font-bold text-gradient">{xp} XP</span>
+
+            {/* XP Display */}
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="flex items-center gap-2 justify-end mb-1">
+                  <Zap className="w-5 h-5 text-amber-500" />
+                  <span className="text-2xl font-bold text-neutral-900 dark:text-white tabular-nums">{animatedXP}</span>
+                  <span className="text-neutral-500">XP</span>
+                </div>
+                <p className="text-sm text-neutral-500">{nextLevelXp - xp} XP to next level</p>
               </div>
-              <p className="text-xs text-gray-500">{nextLevelXp - xp} XP to next level</p>
             </div>
           </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+
+          {/* Progress Bar */}
+          <div className="mt-5">
+            <div className="flex justify-between text-sm text-neutral-500 mb-2">
               <span>Progress to Level {userLevel + 1}</span>
-              <span>{Math.round((xp / nextLevelXp) * 100)}%</span>
+              <span className="tabular-nums">{Math.round(xpProgress)}%</span>
             </div>
-            <Progress value={(xp / nextLevelXp) * 100} className="h-3 rounded-full">
-              <div 
-                className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-1000"
-                style={{ width: `${(xp / nextLevelXp) * 100}%` }}
+            <div className="h-3 rounded-full bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-1000"
+                style={{ width: `${xpProgress}%` }}
               />
-            </Progress>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Current Streak */}
-      <Card className="neuro-card">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="icon-container-warning">
-                <Flame className="h-8 w-8 text-orange-500" />
-              </div>
-              <div>
-                <h4 className="text-xl font-bold">Current Streak</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Keep up the momentum!</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-4xl font-bold text-gradient-emerald">{streakDays}</div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Days Active</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Achievements */}
-      <Card className="neuro-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <div className="icon-container">
-              <Trophy className="h-6 w-6 text-yellow-600" />
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatBox
+          icon={<Flame className="w-5 h-5" />}
+          value={streakDays}
+          label="Day Streak"
+          color="amber"
+        />
+        <StatBox
+          icon={<Trophy className="w-5 h-5" />}
+          value={unlockedAchievements.length}
+          label="Achievements"
+          color="purple"
+        />
+        <StatBox
+          icon={<Target className="w-5 h-5" />}
+          value={exerciseHistory.length}
+          label="Exercises"
+          color="emerald"
+        />
+        <StatBox
+          icon={<Star className="w-5 h-5" />}
+          value={healthLogs.length}
+          label="Health Logs"
+          color="blue"
+        />
+      </div>
+
+      {/* Achievements Section */}
+      <div className="card-elevated p-5">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center">
+              <Trophy className="w-5 h-5 text-white" />
             </div>
-            <span className="text-gradient">Achievements</span>
-            <Badge variant="outline" className="px-3 py-1 rounded-full">
-              {unlockedAchievements.length}/{achievements.length}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Unlocked Achievements */}
-          {unlockedAchievements.length > 0 && (
-            <div className="space-y-3">
-              <h5 className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                <Gift className="h-4 w-4" />
+            <div>
+              <h3 className="font-semibold text-neutral-900 dark:text-white">Achievements</h3>
+              <p className="text-xs text-neutral-500">{unlockedAchievements.length} of {achievements.length} unlocked</p>
+            </div>
+          </div>
+          <span className="tag tag-purple">
+            <Sparkles className="w-3 h-3" />
+            {unlockedAchievements.length}/{achievements.length}
+          </span>
+        </div>
+
+        {/* Unlocked Achievements */}
+        {unlockedAchievements.length > 0 && (
+          <div className="mb-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Gift className="w-4 h-4 text-emerald-500" />
+              <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
                 Unlocked ({unlockedAchievements.length})
-              </h5>
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {unlockedAchievements.map((achievement) => (
-                <div key={achievement.id} className="achievement-badge p-4 rounded-2xl">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-white/20 rounded-full">
-                      {achievement.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h6 className="font-bold text-white">{achievement.title}</h6>
-                      <p className="text-sm text-white/80">{achievement.description}</p>
-                    </div>
-                    <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                      {achievement.reward}
-                    </Badge>
-                  </div>
-                </div>
+                <AchievementCard key={achievement.id} achievement={achievement} />
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Locked Achievements */}
+        {lockedAchievements.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="w-4 h-4 text-neutral-500" />
+              <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                In Progress ({lockedAchievements.length})
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {lockedAchievements.map((achievement) => (
+                <AchievementCard key={achievement.id} achievement={achievement} locked />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Motivation Banner */}
+      <div className="p-5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <div>
+            <h4 className="font-semibold mb-0.5">Keep Going!</h4>
+            <p className="text-white/80 text-sm">
+              You're on a {streakDays}-day streak! Complete more exercises and log symptoms to level up faster.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Stat Box Component
+const StatBox = ({
+  icon,
+  value,
+  label,
+  color
+}: {
+  icon: React.ReactNode;
+  value: number;
+  label: string;
+  color: 'amber' | 'purple' | 'emerald' | 'blue';
+}) => {
+  const iconWrapperClass = {
+    amber: 'icon-wrapper-amber',
+    purple: 'icon-wrapper-purple',
+    emerald: 'icon-wrapper-green',
+    blue: 'icon-wrapper-blue'
+  };
+
+  return (
+    <div className="card-elevated p-4">
+      <div className={`icon-wrapper ${iconWrapperClass[color]} mb-3`}>
+        {icon}
+      </div>
+      <p className="text-xl font-bold text-neutral-900 dark:text-white tabular-nums">{value}</p>
+      <p className="text-sm text-neutral-500">{label}</p>
+    </div>
+  );
+};
+
+// Achievement Card Component
+const AchievementCard = ({
+  achievement,
+  locked = false
+}: {
+  achievement: Achievement;
+  locked?: boolean;
+}) => {
+  const progressPercent = (achievement.progress / achievement.maxProgress) * 100;
+
+  return (
+    <div className={`p-4 rounded-xl transition-colors ${
+      locked
+        ? 'bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700'
+        : `bg-gradient-to-br ${achievement.color} text-white`
+    }`}>
+      <div className="flex items-start gap-3">
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+          locked ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-500' : 'bg-white/20'
+        }`}>
+          {locked ? <Lock className="w-4 h-4" /> : achievement.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <h4 className={`font-medium text-sm truncate ${locked ? 'text-neutral-700 dark:text-neutral-300' : ''}`}>
+              {achievement.title}
+            </h4>
+            {!locked && <CheckCircle2 className="w-4 h-4 flex-shrink-0" />}
+          </div>
+          <p className={`text-xs mb-2 ${locked ? 'text-neutral-500' : 'text-white/80'}`}>
+            {achievement.description}
+          </p>
+
+          {locked && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-neutral-500">
+                <span>{achievement.progress}/{achievement.maxProgress}</span>
+                <span>{Math.round(progressPercent)}%</span>
+              </div>
+              <div className="h-1 rounded-full bg-neutral-200 dark:bg-neutral-600 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-blue-500"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
             </div>
           )}
 
-          {/* Locked Achievements */}
-          {lockedAchievements.length > 0 && (
-            <div className="space-y-3">
-              <h5 className="font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                In Progress ({lockedAchievements.length})
-              </h5>
-              {lockedAchievements.map((achievement) => (
-                <div key={achievement.id} className="p-4 neuro-card-inset rounded-2xl">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-full opacity-50">
-                      {achievement.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h6 className="font-bold text-gray-700 dark:text-gray-300">{achievement.title}</h6>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{achievement.description}</p>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs">
-                          <span>Progress: {achievement.progress}/{achievement.maxProgress}</span>
-                          <span>{Math.round((achievement.progress / achievement.maxProgress) * 100)}%</span>
-                        </div>
-                        <Progress value={(achievement.progress / achievement.maxProgress) * 100} className="h-2" />
-                      </div>
-                    </div>
-                    <Badge variant="outline" className="opacity-60">
-                      {achievement.reward}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          <div className={`inline-flex items-center gap-1 mt-2 px-2 py-1 rounded-full text-xs font-medium ${
+            locked
+              ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400'
+              : 'bg-white/20'
+          }`}>
+            <Zap className="w-3 h-3" />
+            {achievement.reward}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,6 @@
-
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useEyeCare } from '@/contexts/EyeCareContext';
 import OnboardingWizard from '@/components/OnboardingWizard';
-import NavigationHeader from '@/components/NavigationHeader';
 import Dashboard from '@/components/Dashboard';
 import ScreenTimeCard from '@/components/ScreenTimeCard';
 import WeeklyScreenTimeChart from '@/components/WeeklyScreenTimeChart';
@@ -15,333 +14,247 @@ import EyeCheckupScheduler from '@/components/EyeCheckupScheduler';
 import VoiceAssistant from '@/components/VoiceAssistant';
 import AIInsights from '@/components/AIInsights';
 import GamificationPanel from '@/components/GamificationPanel';
-import { Button } from '@/components/ui/button';
-import { useEyeCare } from '@/contexts/EyeCareContext';
-import { 
-  Home, 
-  Activity, 
-  BarChart3, 
-  Settings, 
+import {
+  Home,
+  Activity,
+  BarChart3,
+  Settings,
   BookOpen,
-  Calendar,
   Heart,
-  Sparkles,
-  Eye,
   Brain,
   Mic,
-  Trophy
+  Trophy,
+  Eye,
+  Menu,
+  X,
+  Moon,
+  Sun,
 } from 'lucide-react';
 
 const Index = () => {
-  const { onboardingCompleted, setOnboardingComplete } = useEyeCare();
+  const { onboardingCompleted, setOnboardingComplete, screenTime } = useEyeCare();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const darkMode = document.documentElement.classList.contains('dark');
+    setIsDark(darkMode);
+  }, []);
+
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+    document.documentElement.classList.toggle('dark');
+  };
 
   if (!onboardingCompleted) {
     return <OnboardingWizard onComplete={setOnboardingComplete} />;
   }
 
-  const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home, gradient: 'from-blue-500 to-blue-600' },
-    { id: 'ai-insights', label: 'AI Insights', icon: Brain, gradient: 'from-purple-500 to-pink-600' },
-    { id: 'monitoring', label: 'Analytics', icon: BarChart3, gradient: 'from-indigo-500 to-purple-600' },
-    { id: 'exercises', label: 'Exercises', icon: Activity, gradient: 'from-emerald-500 to-emerald-600' },
-    { id: 'health', label: 'Health Log', icon: Heart, gradient: 'from-red-500 to-pink-600' },
-    { id: 'voice', label: 'Voice AI', icon: Mic, gradient: 'from-teal-500 to-cyan-600' },
-    { id: 'gamification', label: 'Achievements', icon: Trophy, gradient: 'from-yellow-500 to-orange-600' },
-    { id: 'education', label: 'Learn', icon: BookOpen, gradient: 'from-amber-500 to-orange-600' },
-    { id: 'settings', label: 'Settings', icon: Settings, gradient: 'from-gray-500 to-gray-600' }
+  const navItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'ai-insights', label: 'AI Insights', icon: Brain },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'exercises', label: 'Exercises', icon: Activity },
+    { id: 'health', label: 'Health', icon: Heart },
+    { id: 'voice', label: 'Voice', icon: Mic },
+    { id: 'achievements', label: 'Achievements', icon: Trophy },
+    { id: 'learn', label: 'Learn', icon: BookOpen },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
-      
       case 'ai-insights':
+        return <AIInsights />;
+      case 'analytics':
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container-ai animate-float">
-                  <Brain className="h-6 w-6 text-purple-600" />
-                </div>
-                <h1 className="text-4xl font-bold text-gradient-ai">AI-Powered Insights</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Sparkles className="h-6 w-6 text-yellow-500" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Smart recommendations powered by artificial intelligence</p>
-            </div>
-            <AIInsights />
-          </div>
-        );
-      
-      case 'monitoring':
-        return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container animate-float">
-                  <BarChart3 className="h-6 w-6 text-indigo-600" />
-                </div>
-                <h1 className="text-4xl font-bold text-gradient">Screen Time & Analytics</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Sparkles className="h-6 w-6 text-yellow-500" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Monitor your digital wellness with precision</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Analytics</h2>
+            <div className="grid md:grid-cols-2 gap-6">
               <ScreenTimeCard />
               <BrightnessControl />
             </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-6">
               <WeeklyScreenTimeChart />
               <EyeHealthStats />
             </div>
-            
             <BreakControls />
           </div>
         );
-      
       case 'exercises':
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container-success animate-float">
-                  <Activity className="h-6 w-6 text-emerald-600" />
-                </div>
-                <h1 className="text-4xl font-bold text-gradient-emerald">Eye Exercises</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Eye className="h-6 w-6 text-blue-600" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Strengthen and relax your eyes with guided exercises</p>
-            </div>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Eye Exercises</h2>
             <EyeExercises />
           </div>
         );
-      
       case 'health':
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container-warning animate-float">
-                  <Heart className="h-6 w-6 text-red-600" />
-                </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-pink-600 to-red-600 bg-clip-text text-transparent">Health Tracking</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Calendar className="h-6 w-6 text-purple-600" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Monitor symptoms and schedule checkups</p>
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Health Tracking</h2>
+            <div className="grid md:grid-cols-2 gap-6">
               <DailyHealthLog />
               <EyeCheckupScheduler />
             </div>
           </div>
         );
-
       case 'voice':
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container-ai animate-float">
-                  <Mic className="h-6 w-6 text-teal-600" />
-                </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">Voice Assistant</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Brain className="h-6 w-6 text-purple-600" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Control your eye care with voice commands</p>
-            </div>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Voice Assistant</h2>
             <VoiceAssistant />
           </div>
         );
-
-      case 'gamification':
+      case 'achievements':
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container-warning animate-float">
-                  <Trophy className="h-6 w-6 text-yellow-600" />
-                </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">Achievements & Progress</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Sparkles className="h-6 w-6 text-yellow-500" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Track your progress and unlock achievements</p>
-            </div>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Achievements</h2>
             <GamificationPanel />
           </div>
         );
-      
-      case 'education':
+      case 'learn':
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container-warning animate-float">
-                  <BookOpen className="h-6 w-6 text-amber-600" />
-                </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 bg-clip-text text-transparent">Eye Health Education</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Sparkles className="h-6 w-6 text-yellow-500" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Learn tips and best practices for optimal eye health</p>
-            </div>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Learn</h2>
             <EyeHealthTips />
           </div>
         );
-      
       case 'settings':
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4 py-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="icon-container animate-float">
-                  <Settings className="h-6 w-6 text-gray-600" />
-                </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-600 via-gray-700 to-gray-600 bg-clip-text text-transparent">Settings & Preferences</h1>
-                <div className="icon-container animate-float delay-500">
-                  <Sparkles className="h-6 w-6 text-yellow-500" />
-                </div>
-              </div>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Customize your VisionCare experience</p>
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Settings</h2>
+            <div className="grid md:grid-cols-2 gap-6">
               <BrightnessControl />
               <BreakControls />
             </div>
           </div>
         );
-      
       default:
         return <Dashboard />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-950/20 transition-all duration-700">
-      <NavigationHeader 
-        onOpenSettings={() => setActiveTab('settings')}
-      />
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
+        <div className="h-full px-4 flex items-center justify-between">
+          {/* Left */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            >
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+                <Eye className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-semibold text-lg hidden sm:block">VisionCare</span>
+            </div>
+          </div>
 
-      <div className="flex min-h-[calc(100vh-80px)]">
-        {/* Sidebar Navigation */}
-        <div className="hidden md:flex w-80 backdrop-professional border-r border-white/10 dark:border-white/5">
-          <div className="flex flex-col w-full p-6">
-            <nav className="space-y-3">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                return (
-                  <Button
-                    key={item.id}
-                    variant="ghost"
-                    className={`w-full justify-start text-left p-4 h-auto transition-all duration-300 group ${
-                      isActive 
-                        ? `bg-gradient-to-r ${item.gradient} text-white shadow-lg shadow-blue-500/25 scale-105` 
-                        : 'hover:bg-white/10 dark:hover:bg-white/5 hover:scale-102'
-                    }`}
-                    onClick={() => setActiveTab(item.id)}
-                  >
-                    <div className={`p-2 rounded-xl mr-4 transition-all duration-300 ${
-                      isActive 
-                        ? 'bg-white/20' 
-                        : 'bg-white/10 dark:bg-white/5 group-hover:bg-white/20'
-                    }`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div className="flex flex-col items-start">
-                      <span className="font-semibold text-lg">{item.label}</span>
-                      <span className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
-                        {item.id === 'dashboard' && 'Overview & insights'}
-                        {item.id === 'ai-insights' && 'Smart recommendations'}
-                        {item.id === 'monitoring' && 'Track screen time'}
-                        {item.id === 'exercises' && 'Eye workouts'}
-                        {item.id === 'health' && 'Symptom logging'}
-                        {item.id === 'voice' && 'Voice commands'}
-                        {item.id === 'gamification' && 'Progress & rewards'}
-                        {item.id === 'education' && 'Tips & guides'}
-                        {item.id === 'settings' && 'Customize app'}
-                      </span>
-                    </div>
-                  </Button>
-                );
-              })}
-            </nav>
+          {/* Center - Screen time */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800">
+            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="text-sm text-neutral-600 dark:text-neutral-400">Today:</span>
+            <span className="text-sm font-semibold tabular-nums">
+              {Math.floor(screenTime.daily / 60)}h {Math.floor(screenTime.daily % 60)}m
+            </span>
+          </div>
+
+          {/* Right */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-medium">
+              U
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Bottom Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 backdrop-professional border-t border-white/10 dark:border-white/5 z-50">
-          <div className="flex justify-around p-3">
-            {navigationItems.slice(0, 5).map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  size="sm"
-                  className={`flex flex-col items-center space-y-1 h-auto py-3 px-4 transition-all duration-300 ${
-                    isActive 
-                      ? `bg-gradient-to-b ${item.gradient} text-white shadow-lg rounded-2xl scale-110` 
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                  }`}
-                  onClick={() => setActiveTab(item.id)}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span className="text-xs font-medium">{item.label}</span>
-                </Button>
-              );
-            })}
-          </div>
-        </div>
+      {/* Sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-        {/* Main Content */}
-        <main className="flex-1 p-8 pb-24 md:pb-8 overflow-auto">
+      {/* Sidebar */}
+      <aside className={`
+        fixed top-14 bottom-0 left-0 z-40 w-64
+        bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800
+        transition-transform duration-200 lg:translate-x-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <nav className="p-3 space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setSidebarOpen(false);
+                }}
+                className={`
+                  w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                  transition-colors duration-150
+                  ${isActive
+                    ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                  }
+                `}
+              >
+                <Icon className="w-[18px] h-[18px]" />
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+      </aside>
+
+      {/* Main content */}
+      <main className="pt-14 lg:pl-64 min-h-screen">
+        <div className="p-4 md:p-6 max-w-6xl mx-auto">
           {renderContent()}
-        </main>
-      </div>
-
-      {/* Footer */}
-      <footer className="backdrop-professional border-t border-white/10 dark:border-white/5 mt-16 hidden md:block">
-        <div className="container mx-auto py-8 px-8">
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="icon-container animate-float">
-                <Eye className="h-6 w-6 text-blue-600" />
-              </div>
-              <p className="text-2xl font-bold text-gradient">VisionCare - Your AI-Powered Eye Wellness Assistant</p>
-              <div className="icon-container animate-float delay-300">
-                <Sparkles className="h-6 w-6 text-yellow-500" />
-              </div>
-            </div>
-            <p className="text-lg text-gray-600 dark:text-gray-400 font-medium italic">
-              "See Clearly. Live Comfortably. Track Progress with AI."
-            </p>
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-200"></div>
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-400"></div>
-            </div>
-          </div>
         </div>
-      </footer>
+      </main>
+
+      {/* Mobile bottom nav */}
+      <nav className="fixed bottom-0 left-0 right-0 lg:hidden bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 z-30">
+        <div className="flex justify-around py-2">
+          {navItems.slice(0, 5).map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`flex flex-col items-center gap-1 px-3 py-1 ${
+                  isActive ? 'text-blue-600' : 'text-neutral-500'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      <div className="h-16 lg:hidden" />
     </div>
   );
 };

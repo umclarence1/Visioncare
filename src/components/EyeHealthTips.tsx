@@ -1,15 +1,24 @@
-
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowUp, ArrowDown, AlertTriangle } from 'lucide-react';
+import { useState, useMemo } from 'react';
 import { useEyeCare } from '@/contexts/EyeCareContext';
+import {
+  Lightbulb,
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Monitor,
+  Moon,
+  Clock,
+  Droplets,
+  Sparkles
+} from 'lucide-react';
 
 interface Tip {
   id: number;
   title: string;
   description: string;
   priority: 'high' | 'medium' | 'low';
+  icon: React.ReactNode;
   conditions: {
     longScreenTime?: boolean;
     noBreaks?: boolean;
@@ -24,13 +33,15 @@ const allTips: Tip[] = [
     title: "20-20-20 Rule",
     description: "Every 20 minutes, look at something 20 feet away for 20 seconds. This helps reduce eye strain.",
     priority: 'high',
+    icon: <Eye className="w-5 h-5" />,
     conditions: { longScreenTime: true }
   },
   {
     id: 2,
     title: "Adjust Screen Position",
-    description: "Position your screen about an arm's length away and at eye level or slightly below to reduce neck strain.",
+    description: "Position your screen about an arm's length away and at eye level or slightly below.",
     priority: 'medium',
+    icon: <Monitor className="w-5 h-5" />,
     conditions: { longScreenTime: true }
   },
   {
@@ -38,20 +49,23 @@ const allTips: Tip[] = [
     title: "Reduce Glare",
     description: "Minimize glare by adjusting room lighting and using matte screen filters if necessary.",
     priority: 'medium',
+    icon: <Sparkles className="w-5 h-5" />,
     conditions: { highBrightness: true }
   },
   {
     id: 4,
     title: "Blink More Often",
-    description: "When using digital devices, we blink less frequently. Make a conscious effort to blink regularly to keep your eyes moist.",
+    description: "When using digital devices, we blink less frequently. Make a conscious effort to blink regularly.",
     priority: 'high',
+    icon: <Droplets className="w-5 h-5" />,
     conditions: { longScreenTime: true }
   },
   {
     id: 5,
     title: "Use Night Mode",
-    description: "Enable night mode or blue light filters in the evening to reduce exposure to blue light, which can affect sleep.",
+    description: "Enable night mode or blue light filters in the evening to reduce exposure to blue light.",
     priority: 'high',
+    icon: <Moon className="w-5 h-5" />,
     conditions: { nightTime: true }
   },
   {
@@ -59,18 +73,20 @@ const allTips: Tip[] = [
     title: "Take Regular Breaks",
     description: "You've been working for a while. Remember to take short breaks to prevent eye fatigue.",
     priority: 'high',
+    icon: <Clock className="w-5 h-5" />,
     conditions: { noBreaks: true }
   },
   {
     id: 7,
-    title: "Brightness Adjustment",
+    title: "Lower Brightness",
     description: "Consider lowering your screen brightness. High brightness levels can contribute to eye strain.",
     priority: 'medium',
+    icon: <Monitor className="w-5 h-5" />,
     conditions: { highBrightness: true }
   }
 ];
 
-const EyeHealthTips: React.FC = () => {
+const EyeHealthTips = () => {
   const [expanded, setExpanded] = useState(false);
   const { screenTime, brightness, isTakingBreak } = useEyeCare();
 
@@ -89,7 +105,6 @@ const EyeHealthTips: React.FC = () => {
       });
     });
 
-    // Sort by priority
     return filteredTips.sort((a, b) => {
       const priorityOrder = { high: 0, medium: 1, low: 2 };
       return priorityOrder[a.priority] - priorityOrder[b.priority];
@@ -98,51 +113,102 @@ const EyeHealthTips: React.FC = () => {
 
   const displayTips = expanded ? relevantTips : relevantTips.slice(0, 3);
 
+  const getPriorityStyles = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return {
+          border: 'border-l-4 border-l-red-500',
+          bg: 'bg-red-50 dark:bg-red-900/10',
+          icon: 'text-red-600 dark:text-red-400'
+        };
+      case 'medium':
+        return {
+          border: 'border-l-4 border-l-amber-500',
+          bg: 'bg-amber-50 dark:bg-amber-900/10',
+          icon: 'text-amber-600 dark:text-amber-400'
+        };
+      default:
+        return {
+          border: 'border-l-4 border-l-emerald-500',
+          bg: 'bg-emerald-50 dark:bg-emerald-900/10',
+          icon: 'text-emerald-600 dark:text-emerald-400'
+        };
+    }
+  };
+
   return (
-    <Card className="shadow-md card-gradient">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">Contextual Eye Health Tips</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col space-y-4">
-          {displayTips.map((tip) => (
-            <div 
-              key={tip.id} 
-              className={`bg-white dark:bg-gray-800 p-3 rounded-md shadow-sm hover:shadow-md transition-all duration-300
-                ${tip.priority === 'high' ? 'border-l-4 border-red-500' : 
-                  tip.priority === 'medium' ? 'border-l-4 border-yellow-500' : 
-                  'border-l-4 border-green-500'}`}
-            >
-              <div className="flex items-center gap-2">
-                <h3 className="font-medium text-primary">{tip.title}</h3>
-                {tip.priority === 'high' && (
-                  <AlertTriangle className="h-4 w-4 text-red-500" />
-                )}
+    <div className="card-elevated p-5">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="icon-wrapper icon-wrapper-amber">
+            <Lightbulb className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-neutral-900 dark:text-white">Health Tips</h3>
+            <p className="text-xs text-neutral-500">Personalized for you</p>
+          </div>
+        </div>
+        {relevantTips.length > 0 && (
+          <span className="tag tag-blue">
+            {relevantTips.length} tip{relevantTips.length > 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+
+      {relevantTips.length === 0 ? (
+        <div className="text-center py-8">
+          <div className="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-3">
+            <Sparkles className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <p className="text-neutral-700 dark:text-neutral-300 font-medium">You're doing great!</p>
+          <p className="text-sm text-neutral-500 mt-1">No specific tips needed right now</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {displayTips.map((tip) => {
+            const styles = getPriorityStyles(tip.priority);
+            return (
+              <div
+                key={tip.id}
+                className={`p-3 rounded-lg ${styles.border} ${styles.bg} transition-colors`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`w-9 h-9 rounded-lg bg-white dark:bg-neutral-800 flex items-center justify-center ${styles.icon}`}>
+                    {tip.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h4 className="font-medium text-sm text-neutral-900 dark:text-white">{tip.title}</h4>
+                      {tip.priority === 'high' && (
+                        <AlertTriangle className="w-4 h-4 text-red-500" />
+                      )}
+                    </div>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400">{tip.description}</p>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">{tip.description}</p>
-            </div>
-          ))}
-          
+            );
+          })}
+
           {relevantTips.length > 3 && (
-            <Button 
-              variant="outline" 
-              className="w-full mt-2" 
+            <button
               onClick={() => setExpanded(!expanded)}
+              className="w-full py-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-medium text-sm flex items-center justify-center gap-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
             >
               {expanded ? (
-                <span className="flex items-center">
-                  Show Less <ArrowUp className="ml-2 h-4 w-4" />
-                </span>
+                <>
+                  Show Less <ChevronUp className="w-4 h-4" />
+                </>
               ) : (
-                <span className="flex items-center">
-                  Show More <ArrowDown className="ml-2 h-4 w-4" />
-                </span>
+                <>
+                  Show {relevantTips.length - 3} More <ChevronDown className="w-4 h-4" />
+                </>
               )}
-            </Button>
+            </button>
           )}
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 

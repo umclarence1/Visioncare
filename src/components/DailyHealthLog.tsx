@@ -1,20 +1,17 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Slider } from '@/components/ui/slider';
-import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useEyeCare } from '@/contexts/EyeCareContext';
-import { Calendar, TrendingUp, Plus } from 'lucide-react';
+import {
+  Calendar,
+  TrendingUp,
+  Plus,
+  Check,
+  Heart
+} from 'lucide-react';
 
 const commonSymptoms = [
   'Dryness',
-  'Itchiness', 
+  'Itchiness',
   'Redness',
   'Burning sensation',
   'Blurred vision',
@@ -23,16 +20,16 @@ const commonSymptoms = [
   'Sensitivity to light'
 ];
 
-const DailyHealthLog: React.FC = () => {
+const DailyHealthLog = () => {
   const { healthLogs, addHealthLog, screenTime } = useEyeCare();
   const [showAddForm, setShowAddForm] = useState(false);
   const [symptoms, setSymptoms] = useState<string[]>([]);
-  const [severity, setSeverity] = useState<number[]>([3]);
+  const [severity, setSeverity] = useState(3);
   const [notes, setNotes] = useState('');
 
   const handleSymptomToggle = (symptom: string) => {
-    setSymptoms(prev => 
-      prev.includes(symptom) 
+    setSymptoms(prev =>
+      prev.includes(symptom)
         ? prev.filter(s => s !== symptom)
         : [...prev, symptom]
     );
@@ -40,175 +37,248 @@ const DailyHealthLog: React.FC = () => {
 
   const handleSubmit = () => {
     if (symptoms.length === 0) return;
-    
+
     addHealthLog({
       date: new Date().toISOString().split('T')[0],
       symptoms,
-      severity: severity[0],
+      severity,
       notes,
       screenTimeHours: screenTime.daily / 60
     });
 
-    // Reset form
     setSymptoms([]);
-    setSeverity([3]);
+    setSeverity(3);
     setNotes('');
     setShowAddForm(false);
   };
 
   const chartData = healthLogs.slice(0, 7).reverse().map(log => ({
     date: new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    severity: log.severity,
-    screenTime: log.screenTimeHours
+    severity: log.severity
   }));
 
+  const getSeverityColor = (sev: number) => {
+    if (sev <= 2) return 'text-emerald-600 dark:text-emerald-400';
+    if (sev <= 3) return 'text-amber-600 dark:text-amber-400';
+    return 'text-red-600 dark:text-red-400';
+  };
+
+  const getSeverityBg = (sev: number) => {
+    if (sev <= 2) return 'bg-emerald-100 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800';
+    if (sev <= 3) return 'bg-amber-100 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800';
+    return 'bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800';
+  };
+
   return (
-    <Card className="shadow-md card-gradient">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold">Daily Eye Health Log</CardTitle>
-          <Calendar className="h-5 w-5 text-primary" />
+    <div className="card-elevated p-5">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="icon-wrapper icon-wrapper-red">
+            <Heart className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-neutral-900 dark:text-white">Health Log</h3>
+            <p className="text-xs text-neutral-500">Track your symptoms</p>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {!showAddForm ? (
-            <>
-              <Button 
-                onClick={() => setShowAddForm(true)} 
-                className="w-full"
-                variant="outline"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Log Today's Symptoms
-              </Button>
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-neutral-400" />
+          <span className="text-sm text-neutral-500">{new Date().toLocaleDateString()}</span>
+        </div>
+      </div>
 
-              {healthLogs.length > 0 && (
-                <>
-                  <div className="h-[200px] mt-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis domain={[1, 5]} />
-                        <Tooltip />
-                        <Line 
-                          type="monotone" 
-                          dataKey="severity" 
-                          stroke="hsl(var(--destructive))" 
-                          strokeWidth={2}
-                          name="Severity"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h4 className="font-medium flex items-center">
-                      <TrendingUp className="mr-2 h-4 w-4" />
-                      Recent Entries
-                    </h4>
-                    {healthLogs.slice(0, 3).map(log => (
-                      <div key={log.id} className="p-3 bg-background/50 rounded-lg">
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-sm font-medium">
-                            {new Date(log.date).toLocaleDateString()}
-                          </span>
-                          <Badge variant={log.severity > 3 ? "destructive" : log.severity > 2 ? "secondary" : "outline"}>
-                            Severity: {log.severity}/5
-                          </Badge>
-                        </div>
-                        <div className="flex flex-wrap gap-1 mb-2">
-                          {log.symptoms.map(symptom => (
-                            <Badge key={symptom} variant="outline" className="text-xs">
-                              {symptom}
-                            </Badge>
-                          ))}
-                        </div>
-                        {log.notes && (
-                          <p className="text-xs text-muted-foreground">{log.notes}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            <div className="space-y-4">
-              <div>
-                <Label className="text-sm font-medium mb-3 block">
-                  Select symptoms you're experiencing today:
-                </Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {commonSymptoms.map(symptom => (
-                    <div key={symptom} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={symptom}
-                        checked={symptoms.includes(symptom)}
-                        onCheckedChange={() => handleSymptomToggle(symptom)}
-                      />
-                      <Label htmlFor={symptom} className="text-sm">{symptom}</Label>
-                    </div>
-                  ))}
-                </div>
+      {!showAddForm ? (
+        <div className="space-y-5">
+          {/* Add Entry Button */}
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="w-full p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-red-300 dark:hover:border-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors group"
+          >
+            <div className="flex items-center justify-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Plus className="w-5 h-5 text-red-600 dark:text-red-400" />
               </div>
+              <span className="font-medium text-neutral-700 dark:text-neutral-300">Log Today's Symptoms</span>
+            </div>
+          </button>
 
-              <div>
-                <Label className="text-sm font-medium mb-2 block">
-                  Overall severity (1 = Mild, 5 = Severe)
-                </Label>
-                <div className="px-2">
-                  <Slider
-                    value={severity}
-                    onValueChange={setSeverity}
-                    max={5}
-                    min={1}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>Mild</span>
-                    <span className="font-medium">Level {severity[0]}</span>
-                    <span>Severe</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="notes" className="text-sm font-medium">
-                  Additional notes (optional)
-                </Label>
-                <Textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Any additional details about your symptoms..."
-                  className="mt-1"
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <Button 
-                  onClick={handleSubmit} 
-                  disabled={symptoms.length === 0}
-                  className="flex-1"
-                >
-                  Save Entry
-                </Button>
-                <Button 
-                  onClick={() => setShowAddForm(false)} 
-                  variant="outline"
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
+          {/* Chart */}
+          {healthLogs.length > 0 && (
+            <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50">
+              <h4 className="font-medium text-neutral-900 dark:text-white mb-4 flex items-center gap-2 text-sm">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
+                Severity Trend
+              </h4>
+              <div className="h-40">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#9ca3af" />
+                    <YAxis domain={[1, 5]} tick={{ fontSize: 11 }} stroke="#9ca3af" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="severity"
+                      stroke="#ef4444"
+                      strokeWidth={2}
+                      dot={{ fill: '#ef4444', strokeWidth: 2, r: 3 }}
+                      activeDot={{ r: 5, fill: '#ef4444' }}
+                      name="Severity"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           )}
+
+          {/* Recent Entries */}
+          {healthLogs.length > 0 && (
+            <div>
+              <h4 className="font-medium text-neutral-900 dark:text-white mb-3 flex items-center gap-2 text-sm">
+                <Calendar className="w-4 h-4 text-neutral-500" />
+                Recent Entries
+              </h4>
+              <div className="space-y-2">
+                {healthLogs.slice(0, 3).map(log => (
+                  <div
+                    key={log.id}
+                    className="p-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        {new Date(log.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getSeverityBg(log.severity)} ${getSeverityColor(log.severity)}`}>
+                        Severity {log.severity}/5
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {log.symptoms.map(symptom => (
+                        <span key={symptom} className="px-2 py-0.5 rounded-md bg-neutral-200 dark:bg-neutral-700 text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                          {symptom}
+                        </span>
+                      ))}
+                    </div>
+                    {log.notes && (
+                      <p className="text-xs text-neutral-500 mt-1">{log.notes}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {healthLogs.length === 0 && (
+            <div className="text-center py-6">
+              <div className="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mx-auto mb-3">
+                <Heart className="w-6 h-6 text-neutral-400" />
+              </div>
+              <p className="text-neutral-500 text-sm">No health logs yet</p>
+              <p className="text-xs text-neutral-400 mt-1">Start tracking your symptoms today</p>
+            </div>
+          )}
         </div>
-      </CardContent>
-    </Card>
+      ) : (
+        /* Add Form */
+        <div className="space-y-5">
+          {/* Symptom Selection */}
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              Select symptoms you're experiencing:
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {commonSymptoms.map(symptom => {
+                const isSelected = symptoms.includes(symptom);
+                return (
+                  <button
+                    key={symptom}
+                    onClick={() => handleSymptomToggle(symptom)}
+                    className={`p-2.5 rounded-lg text-left text-sm font-medium transition-colors ${
+                      isSelected
+                        ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-2 border-red-300 dark:border-red-700'
+                        : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-2 border-transparent hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {isSelected && <Check className="w-4 h-4" />}
+                      {symptom}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Severity Slider */}
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              Overall severity
+            </label>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map(level => (
+                <button
+                  key={level}
+                  onClick={() => setSeverity(level)}
+                  className={`flex-1 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
+                    severity === level
+                      ? level <= 2
+                        ? 'bg-emerald-500 text-white'
+                        : level <= 3
+                        ? 'bg-amber-500 text-white'
+                        : 'bg-red-500 text-white'
+                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                  }`}
+                >
+                  {level}
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-neutral-500 mt-1">
+              <span>Mild</span>
+              <span>Severe</span>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              Additional notes (optional)
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Any additional details..."
+              className="w-full p-3 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none text-sm"
+              rows={3}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={handleSubmit}
+              disabled={symptoms.length === 0}
+              className="flex-1 py-2.5 rounded-lg bg-red-500 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-600 transition-colors"
+            >
+              Save Entry
+            </button>
+            <button
+              onClick={() => setShowAddForm(false)}
+              className="flex-1 py-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
